@@ -1,0 +1,1200 @@
+一、sqoop 语句：
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table biz_trade \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.biz_trade
+
+
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table cart \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.cart
+
+
+--------1
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table code_goods \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.code_goods
+
+---------2
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table code_category \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.code_category
+
+-----------3
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table code_city \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.code_city
+
+----------4
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table code_education \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.code_education
+
+----------5
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table code_email_suffix \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.code_email_suffix
+
+----------6
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table code_profession \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.code_profession
+
+----------7
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table code_shop \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.code_shop
+
+----------8
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table order_delivery \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.order_delivery
+
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table order_item \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.order_item
+
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table us_order \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.us_order
+
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table user \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.user
+
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table user_addr \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.user_addr
+
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table user_app_click_log \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.user_app_click_log
+
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table user_extelse 0 end\
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.user_extend
+
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table user_pc_click_log \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.user_pc_click_log
+
+创建 qfbap_dwd :
+create database if not exists qfbap_dwd;
+
+
+创建表qfbap_dwd.dwd_user_pc_pv：
+create table qfbap_dwd.dwd_user_pc_pv 
+as select * from 
+二：
+
+1、生成用户基本宽表user_basic
+
+create table if not exists user_basic (
+  `user_id` bigint 
+  `user_name` string 
+  `user_gender` tinyint 
+  `user_birthday` string 
+  `user_age` int 
+  `constellation` string 
+  `province` string 
+  `city` string 
+  `city_level` tinyint 
+  `e_mail` string 
+  `op_mail` string 
+  `mobile` bigint 
+  `num_seg_mobile` int 
+  `op_mobile` string 
+  `register_time` string 
+  `login_ip` string 
+  `login_source` string 
+  `request_user` string 
+  `total_score` double 
+  `used_score` double 
+  `is_blacklist` tinyint 
+  `is_married` tinyint 
+  `education` string 
+  `monthly_income` double 
+  `profession` string 
+  `is_pregnant_woman` tinyint 
+  `is_have_children` tinyint 
+  `is_have_car` tinyint 
+  `phone_brand` string 
+  `phone_brand_level` string 
+  `phone_cnt` int 
+  `change_phone_cnt` int 
+  `is_maja` tinyint 
+  `majia_account_cnt` int 
+  `loyal_model` string 
+  `shopping_type_model` string 
+  `weight` int 
+  `height` int
+  )
+row format delimited fields terminated by '\t'
+;
+
+  
+from 
+( select 
+a.`user_id`            as  `user_id` ,          
+a.`user_name`          as  `user_name`,         
+a.`user_gender`        as  `user_gender`,       
+a.`user_birthday`      as  `user_birthday`,     
+a.`user_age`           as  `user_age`,          
+a.`constellation`      as  `constellation`,     
+a.`province`           as  `province`,          
+a.`city`               as  `city`,              
+a.`city_level`         as  `city_level`,        
+a.`e_mail`             as  `e_mail`,            
+a.`op_mail`            as  `op_mail`,           
+a.`mobile`             as  `mobile`,            
+a.`num_seg_mobile`     as  `num_seg_mobile`,    
+a.`op_mobile`          as  `op_mobile`,         
+a.`register_time`      as  `register_time`,     
+a.`login_ip`           as  `login_ip`,          
+a.`login_source`       as  `login_source`,      
+a.`request_user`       as  `request_user`,      
+a.`total_score`        as  `total_score` ,      
+a.`used_score`         as  `used_score`,        
+a.`is_blacklist`       as  `is_blacklist`,      
+a.`is_married`         as  `is_married`,        
+a.`education`          as  `education`,         
+a.`monthly_income`     as  `monthly_income` ,   
+a.`profession`         as  `profession`,        
+b.`is_pregnant_woman`  as  `is_pregnant_woman`, 
+b.`is_have_children`   as  `is_have_children`,  
+b.`is_have_car`        as  `is_have_car`,       
+b.`phone_brand`        as  `phone_brand`,       
+b.`phone_brand_level`  as  `phone_brand_level`, 
+b.`phone_cnt`          as  `phone_cnt`,         
+b.`change_phone_cnt`   as  `change_phone_cnt`,  
+b.`is_maja`            as  `is_maja`,           
+b.`majia_account_cnt`  as  `majia_account_cnt`, 
+b.`loyal_model`        as  `loyal_model`,       
+b.`shopping_type_model`as  `shopping_type_model`,
+b.`weight`             as  `weight`,            
+b.`height`             as  `height`             
+from qfbap_ods.user a 
+left joinqfbap_ods.user_extelse 0 endb 
+on a.user_id = b.user_id
+)tmp 
+insert into user_basic 
+select *
+;
+ 
+ 
+ 
+ 
+ 2、根据用户的访问日志信息,统计以下指标,结果存入用户访问模型表user_visit
+ 
+######创建user_visit表#########################################
+
+
+create table if not exists qfbap_dm.user_visit(
+user_id string,
+pc_last_visit_time string,
+pc_last_session string,
+pc_last_cookie string,
+pc_last_pv string,
+pc_last_brower string,
+pc_last_os string,
+pc_first_visit_time string,
+pc_first_session string, 
+pc_first_cookie string,
+pc_first_pv string,
+pc_first_brower string,
+pc_first_os string,
+pc_Con7_visit_count string,
+pc_Con15_visit_count string,
+pc_Con30_visit_count string,
+pc_Con60_visit_count string,
+pc_Con90_visit_count string,
+pc_last30_visit_count string,
+pc_last_visit_Count30_pv string,
+pc_last_visit_Count30_avg_pv string,
+pc_last30_0_5_pv string,
+pc_last30_6_7_pv string,
+pc_last30_8_9_pv string,
+pc_last30_10_11_pv string,
+pc_last30_12_13_pv string,
+pc_last30_14_15_pv string,
+pc_last30_16_17_pv string,
+pc_last30_18_19_pv string,
+pc_last30_20_21_pv string,
+pc_last30_22_23_pv string,
+pc_last30_differ_ip string,
+pc_last30_often_ip string,
+pc_last30_sum_cookie string,
+pc_last30_often_cookie_id string,
+pc_last30_often_brower string,
+pc_last30_often_os string,
+app_last_visit_time string,
+app_last_visit_name string,
+app_last_visit_os string,
+app_first_visit_time string,
+app_first_visit_name string,
+app_first_visit_os string,
+app_first_visit_ip string,
+app_last_visit_Count7 bigint,
+app_last_visit_Count15 string,
+app_last_visit_Count30 string,
+app_last_visit_Count60 string,
+app_last_visit_Count90 string,
+app_last30_0_5_pv string,
+app_last30_6_7_pv string,
+app_last30_8_9_pv string,
+app_last30_10_11_pv string,
+app_last30_12_13_pv string,
+app_last30_14_15_pv string,
+app_last30_16_17_pv string,
+app_last30_18_19_pv string,
+app_last30_20_21_pv string,
+app_last30_22_23_pv string,
+last_visit_ip string,
+last_visit_city string,
+last_visit_province string,
+first_visit_ip string,
+first_visit_city string,
+first_visit_province string
+)
+row format delimited fields terminated by '\t'
+;
+
+######插入数据到user_visit表#########################################、
+
+from (
+select 
+a.user_id as user_id,
+a.visit_time as pc_last_visit_time  ,
+a.session_id as  pc_last_session  ,
+a.cookie_id as  pc_last_cookie  ,
+a.pv as pc_last_pv  ,      
+a.browser_name as  pc_last_brower  , 
+a.visit_os as pc_last_os  ,      
+b.visit_time  as  pc_first_visit_time ,
+b.session_id as   pc_first_session  ,
+b.cookie_id as pc_first_cookie , 
+b.pv as pc_first_pv  ,     
+b.browser_name as pc_first_brower  , 
+b.visit_os as  pc_first_os ,
+f.visit_count  as  pc_Con7_visit_count   ,
+g.visit_count  as  pc_Con15_visit_count  ,
+c.visit_count  as  pc_Con30_visit_count  ,
+d.visit_count  as  pc_Con60_visit_count  ,
+e.visit_count  as  pc_Con90_visit_count  ,
+h.pc_last30_visit_count        as pc_last30_visit_count  ,
+h.pc_last_visit_Count30_pv      as pc_last_visit_Count30_pv  ,
+h.pc_last_visit_Count30_avg_pv  as pc_last_visit_Count30_avg_pv  ,
+h.pc_last30_0_5_pv     as pc_last30_0_5_pv  ,
+h.pc_last30_6_7_pv     as pc_last30_6_7_pv  ,
+h.pc_last30_8_9_pv     as pc_last30_8_9_pv  ,
+h.pc_last30_10_11_pv   as pc_last30_10_11_pv  ,
+h.pc_last30_12_13_pv   as pc_last30_12_13_pv  ,
+h.pc_last30_14_15_pv   as pc_last30_14_15_pv  ,
+h.pc_last30_16_17_pv   as pc_last30_16_17_pv  ,
+h.pc_last30_18_19_pv   as pc_last30_18_19_pv  ,
+h.pc_last30_20_21_pv   as pc_last30_20_21_pv  ,
+h.pc_last30_22_23_pv   as pc_last30_22_23_pv  ,
+h.pc_last30_differ_ip  as pc_last30_differ_ip  ,
+i.visit_ip as pc_last30_often_ip  ,
+h.pc_last30_sum_cookie as pc_last30_sum_cookie  ,
+j.cookie_id as pc_last30_often_cookie_id  ,
+k.browser_name as pc_last30_often_brower  ,
+l.visit_os as pc_last30_often_os  ,
+m.log_time as app_last_visit_time  ,
+m.app_name as app_last_visit_name  ,
+m.os_version as app_last_visit_os  ,
+n.log_time_first as app_first_visit_time  ,
+n.app_name_first as app_first_visit_name  ,
+n.os_version_first as app_first_visit_os  ,
+n.visit_ip_first as app_first_visit_ip  ,
+o.app_last_visit_7 as app_last_visit_Count7 ,
+o.app_last_visit_15 as app_last_visit_Count15  ,
+o.app_last_visit_30 as app_last_visit_Count30  ,
+o.app_last_visit_60 as app_last_visit_Count60  ,
+o.app_last_visit_90 as app_last_visit_Count90  ,
+p.app_last30_0_5_pv   as app_last30_0_5_pv     ,
+p.app_last30_6_7_pv   as app_last30_6_7_pv     ,
+p.app_last30_8_9_pv   as app_last30_8_9_pv     ,
+p.app_last30_10_11_pv as app_last30_10_11_pv   ,
+p.app_last30_12_13_pv as app_last30_12_13_pv   ,
+p.app_last30_14_15_pv as app_last30_14_15_pv   ,
+p.app_last30_16_17_pv as app_last30_16_17_pv   ,
+p.app_last30_18_19_pv as app_last30_18_19_pv   ,
+p.app_last30_20_21_pv as app_last30_20_21_pv   ,
+p.app_last30_22_23_pv as app_last30_22_23_pv   ,
+(case when a.visit_time>m.log_time then a.visit_ip else m.visit_ip end)as last_visit_ip  ,
+(case when a.visit_time>m.log_time then a.city else m.city else 0 end)as last_visit_city  ,
+(case when a.visit_time>m.log_time then a.province else m.province end)as last_visit_province  ,
+(case when b.visit_time<n.log_time_first then b.visit_ip else n.visit_ip_first end)as first_visit_ip  ,
+(case when b.visit_time<n.log_time_first then b.city else n.city else 0 end)as first_visit_city  ,
+(case when b.visit_time<n.log_time_first then b.province else n.province end)as first_visit_province 
+from (select 
+t.user_id as user_id,
+t.visit_time as visit_time,
+t.session_id as session_id,
+t.cookie_id as cookie_id,
+b.pv as pv,
+t.browser_name as browser_name,
+t.visit_os as visit_os ,
+t.visit_ip as visit_ip,
+t.city as city,
+t.province as province
+from(
+select
+user_id,visit_time,session_id,cookie_id,browser_name,visit_os,visit_ip,city,province,
+row_number() over (partition by user_id order by visit_time desc) as od
+from qfbap_ods.user_pc_click_log) t
+left join(
+select user_id,session_id,count(1) as pv from qfbap_ods.user_pc_click_log
+group by user_id,session_id) b
+on t.user_id=b.user_id and t.session_id=b.session_id
+where od=1)a 
+join(
+select 
+t.user_id as user_id,
+t.visit_time as visit_time,
+t.session_id as session_id,
+t.cookie_id as cookie_id,
+b.pv as pv,
+t.browser_name as browser_name,
+t.visit_os as visit_os ,
+t.visit_ip as visit_ip,
+t.city as city,
+t.province as province
+from(
+select
+user_id,visit_time,session_id,cookie_id,browser_name,visit_os,visit_ip,city,province,
+row_number() over (partition by user_id order by visit_time asc) as od
+from qfbap_ods.user_pc_click_log) t
+left join(
+select user_id,session_id,count(1) as pv from qfbap_ods.user_pc_click_log
+group by user_id,session_id) b
+on t.user_id=b.user_id and t.session_id=b.session_id
+where od=1) b 
+on a.user_id = b.user_id
+left join(select * from (
+select user_id,count(distinct to_date(visit_time)) cc,count(1) as visit_count
+from qfbap_ods.user_pc_click_log
+where visit_time>=date_sub('2019-01-04',7) and visit_time<='2019-01-04'
+group by user_id) x
+where x.cc =7) f
+on a.user_id = f.user_id
+left join
+(select * from (
+select user_id,count(distinct to_date(visit_time)) cc,count(distinct session_id) as visit_count
+from qfbap_ods.user_pc_click_log
+where visit_time>=date_sub('2019-01-04',15) and visit_time<='2019-01-04'
+group by user_id) x
+where x.cc =15) g
+on a.user_id = g.user_id
+left join
+(select * from (
+select user_id,count(distinct to_date(visit_time)) cc,count(distinct session_id) as visit_count
+from qfbap_ods.user_pc_click_log
+where visit_time>=date_sub('2019-01-04',30) and visit_time<='2019-01-04'
+group by user_id) x
+where x.cc =30) c
+on a.user_id = c.user_id
+left join
+(select * from (
+select user_id,count(distinct to_date(visit_time)) cc,count(distinct session_id) as visit_count
+from qfbap_ods.user_pc_click_log
+where visit_time>=date_sub('2019-01-04',60) and visit_time<='2019-01-04'
+group by user_id) x
+where x.cc =60) d
+on a.user_id = d.user_id
+left join
+(select * from (
+select user_id,count(distinct to_date(visit_time)) cc,count(distinct session_id) as visit_count
+from qfbap_ods.user_pc_click_log
+where visit_time>=date_sub('2019-01-04',90) and visit_time<='2019-01-04'
+group by user_id) x
+where x.cc =90) e
+on a.user_id = e.user_id
+left join (
+select user_id,
+count(distinct session_id) as pc_last30_visit_count,
+sum(1) as pc_last_visit_Count30_pv,
+floor(sum(1)/30) as pc_last_visit_Count30_avg_pv,
+sum(case when hour(visit_time) <= 5 and hour(visit_time) >= 0 then 1   else 0 end)as   pc_last30_0_5_pv  ,
+sum(case when hour(visit_time) <= 7 and hour(visit_time) >= 6 then 1   else 0 end)as   pc_last30_6_7_pv  ,
+sum(case when hour(visit_time) <= 9 and hour(visit_time) >= 8 then 1   else 0 end)as   pc_last30_8_9_pv  ,
+sum(case when hour(visit_time) <= 11 and hour(visit_time) >= 10 then 1 else 0 end)as pc_last30_10_11_pv  ,
+sum(case when hour(visit_time) <= 13 and hour(visit_time) >= 12 then 1 else 0 end)as pc_last30_12_13_pv  ,
+sum(case when hour(visit_time) <= 15 and hour(visit_time) >= 14 then 1 else 0 end)as pc_last30_14_15_pv  ,
+sum(case when hour(visit_time) <= 17 and hour(visit_time) >= 16 then 1 else 0 end)as pc_last30_16_17_pv  ,
+sum(case when hour(visit_time) <= 19 and hour(visit_time) >= 18 then 1 else 0 end)as pc_last30_18_19_pv  ,
+sum(case when hour(visit_time) <= 21 and hour(visit_time) >= 20 then 1 else 0 end)as pc_last30_20_21_pv  ,
+sum(case when hour(visit_time) <= 23 and hour(visit_time) >= 22 then 1 else 0 end)as pc_last30_22_23_pv  ,
+count(distinct visit_ip) as pc_last30_differ_ip  ,
+count(distinct cookie_id) as pc_last30_sum_cookie 
+from qfbap_ods.user_pc_click_log 
+where visit_time>=date_sub('2019-01-02',29)
+group by user_id
+)h
+on a.user_id = h.user_id
+left join
+(select 
+y.user_id,y.visit_ip
+from 
+(select x.user_id, x.visit_ip, x.ipcount, row_number() over(partition by user_id order by x.ipcount) as iprow 
+from(
+select user_id , visit_ip , count(1) as ipcount
+from qfbap_ods.user_pc_click_log 
+group by user_id,visit_ip
+)x
+)y
+where y.iprow = 1
+)i
+on a.user_id = i.user_id 
+left join
+(select 
+y.user_id,y.cookie_id
+from 
+(select x.user_id, x.cookie_id, x.ckcount, row_number() over(partition by user_id order by x.ckcount) as ckrow 
+from(
+select user_id , cookie_id , count(1) as ckcount
+from qfbap_ods.user_pc_click_log 
+group by user_id,cookie_id
+)x
+)y
+where y.ckrow = 1
+)j
+on a.user_id = j.user_id 
+left join
+(select 
+y.user_id,y.browser_name
+from 
+(select x.user_id, x.browser_name, x.bncount, row_number() over(partition by user_id order by x.bncount) as bnrow 
+from(
+select user_id , browser_name , count(1) as bncount
+from qfbap_ods.user_pc_click_log 
+group by user_id,browser_name
+)x
+)y
+where y.bnrow = 1
+)k
+on a.user_id = k.user_id
+left join
+(select 
+y.user_id,y.visit_os
+from 
+(select x.user_id, x.visit_os, x.vocount, row_number() over(partition by user_id order by x.vocount) as vorow 
+from(
+select user_id , visit_os , count(1) as vocount
+from qfbap_ods.user_pc_click_log 
+group by user_id,visit_os
+)x
+)y
+where y.vorow = 1
+)l
+on a.user_id = l.user_id
+left join 
+(select 
+t.user_id as user_id,
+t.log_time as log_time,
+t.app_name as app_name,
+t.os_version as os_version,
+t.visit_ip as visit_ip,
+t.city as city,
+t.province as province
+from(select
+user_id,log_time,app_name,os_version,visit_ip,city,province,
+row_number() over (partition by user_id order by log_time desc) as od
+from qfbap_ods.user_app_click_log) t
+where od=1)m
+on a.user_id = m.user_id
+left join 
+(select 
+t.user_id as user_id,
+t.log_time as log_time_first,
+t.app_name as app_name_first,
+t.os_version as os_version_first,
+t.visit_ip as visit_ip_first,
+t.city as city,
+t.province as province
+from(select
+user_id,log_time,app_name,os_version,visit_ip,city,province,
+row_number() over (partition by user_id order by log_time asc) as od
+from qfbap_ods.user_app_click_log) t
+where od=1)n
+on a.user_id = n.user_id
+left join 
+(select
+user_id,
+sum(case when log_time>date_sub('2019-01-02',7) then 1 end) as app_last_visit_7,
+sum(case when log_time>date_sub('2019-01-02',15) then 1 end) as app_last_visit_15,
+sum(case when log_time>date_sub('2019-01-02',30) then 1 end) as app_last_visit_30,
+sum(case when log_time>date_sub('2019-01-02',60) then 1 end) as app_last_visit_60,
+sum(case when log_time>date_sub('2019-01-02',90) then 1 end) as app_last_visit_90
+from qfbap_ods.user_app_click_log
+group by user_id
+)o
+on a.user_id=o.user_id
+left join (
+select user_id,
+sum(case when hour(log_time) <= 5 and hour(log_time) >= 0 then 1   else 0 end)as app_last30_0_5_pv  ,
+sum(case when hour(log_time) <= 7 and hour(log_time) >= 6 then 1   else 0 end)as app_last30_6_7_pv  ,
+sum(case when hour(log_time) <= 9 and hour(log_time) >= 8 then 1   else 0 end)as app_last30_8_9_pv  ,
+sum(case when hour(log_time) <= 11 and hour(log_time) >= 10 then 1 else 0 end)as app_last30_10_11_pv  ,
+sum(case when hour(log_time) <= 13 and hour(log_time) >= 12 then 1 else 0 end)as app_last30_12_13_pv  ,
+sum(case when hour(log_time) <= 15 and hour(log_time) >= 14 then 1 else 0 end)as app_last30_14_15_pv  ,
+sum(case when hour(log_time) <= 17 and hour(log_time) >= 16 then 1 else 0 end)as app_last30_16_17_pv  ,
+sum(case when hour(log_time) <= 19 and hour(log_time) >= 18 then 1 else 0 end)as app_last30_18_19_pv  ,
+sum(case when hour(log_time) <= 21 and hour(log_time) >= 20 then 1 else 0 end)as app_last30_20_21_pv  ,
+sum(case when hour(log_time) <= 23 and hour(log_time) >= 22 then 1 else 0 end)as app_last30_22_23_pv  
+from qfbap_ods.user_app_click_log 
+where log_time>=date_sub('2019-01-02',29)
+group by user_id
+)p
+on a.user_id = p.user_id
+)tmp
+insert overwrite table qfbap_dm.user_visit 
+select *
+;
+
+
+######创建user_order表#########################################
+create table qfbap_dm.user_order(
+user_id string,
+first_order_time string,
+last_order_time string,
+firstorder__currenttime string,
+lastorder_currenttime string,
+max_consume string,
+min_consume string,
+total_consume_count string, --累计消费次数（不含退拒）
+total_consume_money string, --累计消费金额（不含退拒）
+user_person_price string, --客单价（含退拒）
+most_often_receiver_address string, --最常用收货地址
+most_often_pay_way string, --最常用支付方式
+recently_30_orders_num string, --近30天订单数量（不含退拒）
+recently_30_orders_money string, --近30天订单金额（不含退拒）
+recently_60_orders_num string, --近60天订单数量（不含退拒）
+recently_60_orders_money string, --近60天订单金额（不含退拒)
+recently_90_orders_num string, --近90天订单数量（不含退拒）
+recently_90_orders_money string, --近90天订单金额（不含退拒）
+recently_30_orders_contain_num string, --近30天订单数量（含退拒）
+recently_30_orders_contain_money string, --近30天订单金额（含退拒）
+recently_60_orders_contain_num string, --近60天购买次数（含退拒）
+recently_60_orders_contain_money string, --近60天购买金额（含退拒）
+recently_90_orders_contain_num string, --近90天购买次数（含退拒)
+recently_90_orders_contain_money string, --近90天购买金额（含退拒）
+recently_90_orders_contain_price string, --近90天的客单价（含退拒）
+return_order_num string, --退货商品数量,
+return_order_money string, --退货商品金额,
+notreceive_order_num string, --拒收商品数量,
+notreceive_order_money string, --拒收商品金额,
+last_return_order_time string, --最近一次退货时间
+ordering_in_school_count string, --学校下单总数,
+ordering_in_company_count string, --公司下单总数,
+ordering_in_home_count string, --家里下单总数,
+ordering_in_beforedawn_count string, --凌晨下单总数,凌晨:0-05 
+ordering_in_monring_count string,  --上午下单总数,上午:06-12
+ordering_in_noon_count string,  --中午下单总数，中午:13-15
+ordering_in_afternoon_count string,  --下午下单总数,下午16-20                  
+ordering_in_evening_count string --晚上下单总数,晚上：21-24
+)row format delimited fields terminated by '\t'
+;
+
+
+######插入数据到user_order表#########################################、
+from(
+select 
+a.user_id,
+a.order_date_min as first_order_time,
+a.order_date_max as last_order_time,
+datediff(current_timestamp,a.order_date_min) currentfirstorder__currenttime,
+datediff(current_timestamp,a.order_date_max) currentlastorder_currenttime,
+a.order_money_max as max_consume ,
+a.order_money_min as min_consume ,
+a.total_consume_count as total_consume_count,
+a.total_consume_money as total_consume_money,
+round(b.toatal_money/b.total_orders,2) as user_person_price,
+c.address as most_often_receiver_address,
+d.pay_type as most_often_pay_way,
+e.recently_30_orders_num , 
+e.recently_30_orders_money ,
+e.recently_60_orders_num , 
+e.recently_60_orders_money ,
+e.recently_90_orders_num , 
+e.recently_90_orders_money ,
+f.recently_30_orders_contain_num ,
+f.recently_30_orders_contain_money,
+f.recently_60_orders_contain_num ,
+f.recently_60_orders_contain_money,
+f.recently_90_orders_contain_num ,
+f.recently_90_orders_contain_money,
+round(b.day90_toatal_money/b.day90_total_orders,2) as recently_90_orders_contain_price,
+g.return_order_num ,
+g.return_order_money ,
+g.notreceive_order_num ,
+g.notreceive_order_money ,
+g.last_return_order_time ,
+h.ordering_in_school_count ,
+h.ordering_in_company_count ,
+h.ordering_in_home_count ,
+h.ordering_in_beforedawn_count,
+h.ordering_in_monring_count ,
+h.ordering_in_noon_count ,
+h.ordering_in_afternoon_count ,
+h.ordering_in_evening_count 
+from (select user_id,
+max(order_date) as order_date_max,
+min(order_date) as order_date_min,
+max(order_money) as order_money_max,
+min(order_money) as order_money_min,
+sum(1) as total_consume_count,
+sum(order_money) as total_consume_money
+from qfbap_ods.us_order
+group by user_id)a
+join (select sum(1) as total_orders,
+sum(order_money) as toatal_money,
+sum(case when order_date>date_sub('2019-01-04',90) then 1 else 0 end) as day90_total_orders,
+sum(case when order_date>date_sub('2019-01-04',90) then order_money else 0 end) as day90_toatal_money
+from qfbap_ods.us_order
+where order_status=1 and pay_status=1
+)b
+join(select user_id ,address
+from (
+select user_id,address,
+row_number() over(partition by user_id order by address_count desc) as acrow
+from(
+select a.user_id,b.address,sum(1) as address_count
+from qfbap_ods.us_order a
+join qfbap_ods.order_delivery b
+on a.order_id = b.order_id 
+group by a.user_id,b.address
+)a
+)a
+where acrow=1
+)c 
+on a.user_id = c.user_id
+join (
+select user_id,pay_type
+from(
+select user_id,pay_type,
+row_number() over(partition by user_id order by pay_type_num desc) as ptnrow
+from(
+select user_id,pay_type,sum(1) as pay_type_num
+from qfbap_ods.us_order
+group by user_id,pay_type
+)a
+)a
+where a.ptnrow=1
+)d
+on a.user_id=d.user_id
+join (
+select user_id,
+sum(case when order_date>date_sub('2019-01-04',30) then 1 else 0 end) as recently_30_orders_num,
+sum(case when order_date>date_sub('2019-01-04',30) then order_money else 0 end) as recently_30_orders_money,
+sum(case when order_date>date_sub('2019-01-04',60) then 1 else 0 end) as recently_60_orders_num,
+sum(case when order_date>date_sub('2019-01-04',60) then order_money else 0 end) as recently_60_orders_money,
+sum(case when order_date>date_sub('2019-01-04',90) then 1 else 0 end) as recently_90_orders_num,
+sum(case when order_date>date_sub('2019-01-04',90) then order_money else 0 end) as recently_90_orders_money
+from qfbap_ods.us_order
+where order_status=1 and pay_type=1
+group by user_id
+)e
+on a.user_id=e.user_id
+join (
+select user_id,
+sum(case when order_date>date_sub('2019-01-04',30) then 1 else 0 end) as recently_30_orders_contain_num ,
+sum(case when order_date>date_sub('2019-01-04',30) then order_money else 0 end) as recently_30_orders_contain_money,
+sum(case when order_date>date_sub('2019-01-04',60) then 1 else 0 end) as recently_60_orders_contain_num ,
+sum(case when order_date>date_sub('2019-01-04',60) then order_money else 0 end) as recently_60_orders_contain_money,
+sum(case when order_date>date_sub('2019-01-04',90) then 1 else 0 end) as recently_90_orders_contain_num ,
+sum(case when order_date>date_sub('2019-01-04',90) then order_money else 0 end) as recently_90_orders_contain_money
+from qfbap_ods.us_order
+group by user_id
+)f
+on a.user_id=f.user_id
+join(
+select user_id,
+sum(case when order_status = 0 then 1 end) as return_order_num ,
+sum(case when order_status = 0 then order_money end) as return_order_money, 
+sum(case when pay_status = 0 then 1 end) as notreceive_order_num ,
+sum(case when pay_status = 0 then order_money end) as notreceive_order_money ,
+max(case when order_status = 0 then order_date end)  as last_return_order_time 
+from qfbap_ods.us_order
+group by user_id
+)g
+on a.user_id = g.user_id
+left join(
+select a.user_id,
+sum(case when c.user_order_flag=1 then 1 end ) as ordering_in_school_count ,
+sum(case when c.user_order_flag=2 then 1 end ) as ordering_in_company_count ,
+sum(case when c.user_order_flag=1 then 1 end ) as ordering_in_home_count ,
+sum(case when a.order_date between 0 and 5 then 1 end ) as ordering_in_beforedawn_count,
+sum(case when a.order_date between 6 and 12 then 1 end ) as ordering_in_monring_count ,
+sum(case when a.order_date between 13 and 15 then 1 end ) as ordering_in_noon_count ,
+sum(case when a.order_date between 16 and 20 then 1 end ) as ordering_in_afternoon_count ,
+sum(case when a.order_date between 21 and 24 then 1 end ) as ordering_in_evening_count 
+from qfbap_ods.us_order a 
+left join qfbap_ods.order_delivery b 
+on a.order_id=b.order_id
+left join qfbap_ods.user_addr c
+on b.addr_id = c.addr_id
+group by a.user_id
+)h 
+on a.user_id = h.user_id
+)tmp 
+insert overwrite table qfbap_dm.user_order
+select * 
+;
+
+
+
+
+sqoop job \
+--create gp1813_user \
+--import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password-file /sqoop/pwd/sqooppwd.pwd \
+--table user_pc_click_log \
+--hive-import \
+--hive-overwrite \
+--hive-table qfbap_ods.user_pc_click_log \
+
+echo -n "root" > sqooppwd.pwd
+hdfs dfs -mkdir /sqoop/pwd
+hdfs dfs -put sqooppwd.pwd /sqoop/pwd
+hdfs dfs -chmod 400 /sqoop/pwd/sqooppwd.pwd
+
+将job配置成oozie的工作流任务：
+hdfs dfs -mkdir -p /phone/oozie
+hdfs dfs -mkdir /phone/oozielib
+上传mysql的驱动包到/phone/oozielib目录下
+hdfs dfs -put ./sqoop /phone/oozie/
+
+启动oozie
+oozied.sh start/run 
+启动historyserver
+mr-jobhistory-daemon.sh start historyserver
+
+检查workflow是否有效：
+oozie validate sqoop/workflow.xml 
+
+出错：
+Oozie URL is not available neither in command option or in the environment
+
+解决方案：
+export OOZIE_URL=http://hadoopCDH:11000/oozie
+
+运行oozie任务：
+oozie job --oozie http://hadoopCDH:11000/oozie -config sqoop/job.properties -run
+
+
+
+
+
+
+
+
+
+select user_id, count(1)
+from user_pc_click_log
+where datediff(concat('',from_unixtime(unix_timestamp(),'yyyy-MM-dd HH:mm:ss'),''),concat('',visit_time,''))<=7
+group by user_id;
+
+datediff计算时间差时，用当天的时间，减去表中某一个字段time的时间
+
+
+
+######老师写的插入数据到user_visit表#########################################、
+
+
+计算用户行为
+select 
+   us.user_id
+   ,r_pc.latest_pc_visit_date-- 最近一次访问时间
+   ,r_pc.latest_pc_visit_session -- 最近一次访问的session
+   ,r_pc.latest_pc_cookies-- 最近一次的coookie
+   ,r_pc.latest_pc_pv -- 最近一次的pc端的pv量
+   ,r_pc.latest_pc_browser_name -- 最近一次访问使用的浏览器
+   ,r_pc.latest_pc_visit_os-- 最近一次访问使用的操作系统
+   ,r_pc.first_pc_visit_date -- 最早pc端访问的日期
+   ,r_pc.first_pc_visit_session--最早pc端访问的session
+   ,r_pc.first_pc_cookies-- 最早pc端访问的cookie
+   ,r_pc.first_pc_pv-- 最早一次访问的pv
+   ,r_pc.first_pc_browser_name -- 最早一次访问使用的浏览器
+   ,r_pc.first_pc_visit_os-- 最早一次访问的os  
+   ,r_pc.day7_pc_cnt --PC连续7天访问次数
+   ,r_pc.day15_pc_cnt-- 连续15天访问次数
+   ,r_pc.month1_pc_cnt -- 连续30天访问次数
+   ,r_pc.month2_pc_cnt-- 连续60天访问的次数
+   ,r_pc.month3_pc_cnt -- 连续90天访问的次数
+   ,r_pc.month1_pc_days --近30天pc端访问的次数
+   ,r_pc.month1_pc_pv --近30天pc端的pv
+   ,r_pc.month1_pc_avg_pv --近30天pc端每天的平均pv
+   ,r_pc.month1_pc_hour025_cnt --0到5点的数量
+   ,r_pc.month1_pc_hour627_cnt --6到7点的数量
+   ,r_pc.month1_pc_hour829_cnt -- 8到9的数量
+   ,r_pc.month1_pc_hour10211_cnt -- 10到11的数量
+   ,r_pc.month1_pc_hour12213_cnt --12到13的数量
+   ,r_pc.month1_pc_hour14216_cnt -- 14到16点的数量
+   ,r_pc.month1_pc_hour17219_cnt -- 17到19点的数量
+   ,r_pc.month1_pc_hour18219_cnt -- 18到19点的数量
+   ,r_pc.month1_pc_hour20221_cnt -- 20到21点的数量
+   ,r_pc.month1_pc_hour22223_cnt -- 22到23点的数量
+   ,pc_month1.month1_pc_diff_ip_cnt --近30天访问使用的不同ip数量
+   ,pc_month1.month1_pc_common_ip --近30天最常用的ip
+   ,pc_month1.month1_pc_diff_cookie_cnt --近30天使用的cookie的数量
+   ,pc_month1.month1_pc_common_cookie --近30使用最常用的cookie_id
+   ,pc_month1.month1_pc_common_browser_name -- pc最常用浏览器
+   ,pc_month1.month1_pc_common_os -- 近30天使用最常用系统
+   ,r_app.latest_app_visit_date, --最近一次app访问的日期
+   r_app.latest_app_name, -- 最近一次访问app的名称
+  r_app.latest_app_visit_os, -- 最近一次app访问的操作系统
+  r_app.first_app_visit_date, -- 第一次app访问日期
+  r_app.first_app_name,-- 第一app访问名称
+  r_app.first_app_visit_os,-- 第一次app访问os
+  r_app.first_visit_ip,--app第一次访问ip
+  r_app.day7_app_cnt,-- app 近7天访问次数
+  r_app.day15_app_cnt,-- app 近15天访问次数
+  r_app.month1_app_cnt, -- app 近30天的访问次数
+  r_app.month2_app_cnt, -- app近60天的访问次数
+  r_app.month3_app_cnt, -- app近90天的访问次数
+  r_app.month1_app_hour025_cnt, -- app近30天0到5点的访问次数
+  r_app.month1_app_hour627_cnt,-- app近30天的6到7点的访问次数
+  r_app.month1_app_hour829_cnt, -- app近30天8到9的访问次数
+  r_app.month1_app_hour10211_cnt,-- app近30天10到11访问次数
+  r_app.month1_app_hour12213_cnt, -- app近30天12到13点的访问次数
+  r_app.month1_app_hour14215_cnt  ,-- app近30天14到15点的访问次数
+  r_app.month1_app_hour16217_cnt  ,-- app近30天16到17点的访问次数
+  r_app.month1_app_hour18219_cnt  ,-- app近30天18到19点的访问次数
+  r_app.month1_app_hour20221_cnt  ,-- app近30天20到21点的访问次数
+  r_app.month1_app_hour22223_cnt  ,-- app近30天22到23点的访问次数
+  (case 
+      when  r_pc.latest_pc_visit_date>= r_app.latest_app_visit_date 
+      then   r_pc.latest_visit_ip
+      else   r_app.latest_visit_ip
+    end )  latest_visit_ip  , --最近一次访问的ip
+   (case 
+      when r_pc.latest_pc_visit_date >= r_app.latest_app_visit_date
+      then r_pc.latest_city
+      else r_app.latest_city
+    end )  latest_city          , --最近一次访问的城市
+   (case
+      when r_pc.latest_pc_visit_date >= r_app.latest_app_visit_date
+      then r_pc.latest_city
+      else r_app.latest_city
+    end
+    ) latest_province      ,-- 最近一次访问的省份
+   (case
+      when r_pc.first_pc_visit_date <= r_app.first_app_visit_date
+      then r_pc.first_visit_ip
+      else r_app.first_visit_ip
+    end
+    ) first_visit_ip       , -- 第一次访问的ip
+   (case 
+      when r_pc.first_pc_visit_date <= r_app.first_app_visit_date
+      then r_pc.first_city
+      else r_app.first_city
+    end
+    ) first_city           ,-- 第一次访问的城市
+   (case
+      when r_pc.first_pc_visit_date <= r_app.first_app_visit_date
+      then r_pc.first_province
+      else r_app.first_province
+    end
+    ) first_province -- 第一次访问的省份
+from qfbap_dwd.dws_user_basic  us
+left join (
+
+    -- PC端的统计指标
+    select 
+      user_id
+       ,max(case when pc.rn_desc = 1 then in_time end) latest_pc_visit_date -- 最近一次访问时间
+       ,max(case when pc.rn_desc=1 then visit_ip end) latest_visit_ip --最近一次的访问ip
+       ,max(case when pc.rn_desc=1 then province end) latest_province
+       ,max(case when pc.rn_desc=1 then city end) latest_city
+       ,max(case when pc.rn_desc = 1 then session_id end) latest_pc_visit_session -- 最近一次访问的session
+       ,max(case when pc.rn_desc = 1 then cookie_id end ) latest_pc_cookies-- 最近一次的coookie
+       ,max(case when pc.rn_desc = 1 then pv end) latest_pc_pv -- 最近一次的pc端的pv量
+       ,max(case when pc.rn_desc = 1 then browser_name end ) latest_pc_browser_name -- 最近一次访问使用的浏览器
+       ,max(case when pc.rn_desc = 1 then visit_os end ) latest_pc_visit_os-- 最近一次访问使用的操作系统
+       ,max(case when pc.rn_asc = 1 then in_time end) first_pc_visit_date -- 最早pc端访问的日期
+       ,max(case when pc.rn_asc=1 then visit_ip end) first_visit_ip --最近一次的访问ip
+       ,max(case when pc.rn_asc=1 then province end) first_province
+       ,max(case when pc.rn_asc=1 then city end) first_city
+       ,max(case when pc.rn_asc = 1 then session_id end ) first_pc_visit_session--最早pc端访问的session
+       ,max(case when pc.rn_asc = 1 then cookie_id end ) first_pc_cookies-- 最早pc端访问的cookie
+       ,max(case when pc.rn_asc = 1 then pv end ) first_pc_pv-- 最早一次访问的pv
+       ,max(case when pc.rn_asc = 1 then browser_name end) first_pc_browser_name -- 最早一次访问使用的浏览器
+       ,max(case when pc.rn_asc = 1 then visit_os end) first_pc_visit_os-- 最早一次访问的os
+       ,sum(dt7) day7_pc_cnt --连续7天访问次数
+       ,sum(dt15) day15_pc_cnt-- 连续15天访问次数
+       ,sum(dt30) month1_pc_cnt -- 连续30天访问次数
+       ,sum(dt60) month2_pc_cnt-- 连续60天访问的次数
+       ,sum(dt90) month3_pc_cnt -- 连续90天访问的次数
+       ,count(distinct (case when dt30=1 then substr(in_time,0,8) end)) month1_pc_days --近30天pc端访问的次数
+       ,sum(case when dt30=1 then pv end ) month1_pc_pv --近30天pc端的pv
+       ,sum(case when dt30=1 then pv end ) 
+          /count(distinct(case when dt30=1 then substr(in_time,0,8) end)) month1_pc_avg_pv --近30天pc端每天的平均pv
+       ,count(case when dt30=1 and hr025=1 then 1 end ) month1_pc_hour025_cnt --0到5点的数量
+       ,count(case when dt30=1 and hr627=1 then 1 end ) month1_pc_hour627_cnt --6到7点的数量
+       ,count(case when dt30=1 and hr829=1 then 1 end ) month1_pc_hour829_cnt -- 8到9的数量
+       ,count(case when dt30=1 and hr10211=1 then 1 end ) month1_pc_hour10211_cnt -- 10到11的数量
+       ,count(case when dt30=1 and hr12213=1 then 1 end ) month1_pc_hour12213_cnt --12到13的数量
+       ,count(case when dt30=1 and hr14215=1 then 1 end ) month1_pc_hour14216_cnt -- 14到16点的数量
+       ,count(case when dt30=1 and hr16217=1 then 1 end ) month1_pc_hour17219_cnt -- 17到19点的数量
+       ,count(case when dt30=1 and hr18219=1 then 1 end ) month1_pc_hour18219_cnt -- 18到19点的数量
+       ,count(case when dt30=1 and hr20221=1 then 1 end ) month1_pc_hour20221_cnt -- 20到21点的数量
+       ,count(case when dt30=1 and hr22223=1 then 1 end ) month1_pc_hour22223_cnt -- 22到23点的数量
+    from (
+       select 
+          row_number() over(distribute by user_id sort by in_time asc) rn_asc,
+          row_number() over(distribute by user_id sort by in_time desc) rn_desc,
+          user_id,
+          session_id,
+          cookie_id,
+          visit_os,
+          browser_name,
+          visit_ip,
+          province,
+          city,
+          (case when in_time >=date_add('2018-12-25',-6) then 1 end ) dt7,
+          (case when in_time>=date_sub('2018-12-25',14) then 1 end ) dt15,
+          (case when in_time >= date_sub('2018-12-25',29) then 1 end) dt30,
+          (case when in_time >= date_sub('2018-12-25',59) then 1 end) dt60,
+           (case when in_time >= date_sub('2018-12-25',179) then 1 end) dt90,
+          (case when hour(in_time) between 0 and 5 then 1 end) hr025,
+          (case when hour(in_time) between 6 and 7 then 1 end ) hr627,
+          (case when hour(in_time) between 8 and 9 then 1 end ) hr829,
+          (case when hour(in_time) between 10 and 11 then 1 end ) hr10211,
+          (case when hour(in_time) between 12 and 13 then 1 end ) hr12213,
+          (case when hour(in_time) between 14 and 15 then 1 end ) hr14215,
+          (case when hour(in_time) between 16 and 17 then 1 end ) hr16217,
+          (case when hour(in_time) between 18 and 19 then 1 end ) hr18219,
+          (case when hour(in_time) between 20 and 21 then 1 end ) hr20221,
+          (case when hour(in_time) between 22 and 23 then 1 end ) hr22223,
+          in_time,
+          out_time,
+          stay_time,
+          pv
+       from qfbap_dwd.dwd_user_pc_pv t
+       where dt ='2018-12-25'
+    )  pc
+    group by user_id
+
+) r_pc on us.user_id = r_pc.user_id
+left join (
+        -- pc端近30天的访问数据
+        select 
+        user_id,
+        count(distinct 
+           case 
+              when type='visit_ip' 
+              then content 
+           end) month1_pc_diff_ip_cnt, --近30天访问使用的不同ip数量
+        max(case 
+              when rn=1 
+                 and  type='visit_ip'
+              then content
+           end) month1_pc_common_ip, --近30天最常用的ip
+        count(
+           distinct
+           case 
+              when rn=1
+                 and type = 'cookie_id'
+              then content
+           end
+           ) month1_pc_diff_cookie_cnt, --近30天使用的cookie的数量
+        max(case 
+              when rn=1
+                 and type='cookie_id'
+              then content
+           end) month1_pc_common_cookie, --近30使用最常用的cookie_id
+        max(case
+              when rn=1
+                 and type='browser_name'
+              then content
+           end) month1_pc_common_browser_name,
+        max(case 
+              when rn=1
+                 and type='visit_os'
+              then content
+           end) month1_pc_common_os -- 近30天使用最常用系统
+    
+        from qfbap_dws.dws_user_visit_month1
+        group by user_id
+    ) pc_month1 on us.user_id = pc_month1.user_id
+left join (
+  -- app端的统计指标
+   select 
+     app.user_id,
+     max(case when rn_desc = 1 then log_time end) latest_app_visit_date ,
+     max(case when rn_desc=1 then app_name  end) latest_app_name,
+     max(case when rn_desc=1 then visit_os end) latest_app_visit_os,
+     max(case when rn_desc=1 then visit_ip end) latest_visit_ip,
+     max(case when rn_desc=1 then city end) latest_city,
+     max(case when rn_desc=1 then province end) latest_province,
+     max(case when rn_asc=1 then log_time end ) first_app_visit_date,
+     max(case when rn_asc=1 then app_name end) first_app_name,
+     max(case when rn_asc=1 then visit_os end) first_app_visit_os,
+     max(case when rn_asc=1 then visit_ip end) first_visit_ip,
+     max(case when rn_asc=1 then city end) first_city,
+     max(case when rn_asc=1 then province end) first_province,
+     sum(app_dt7)  day7_app_cnt,
+     sum(app_dt15) day15_app_cnt,
+     sum(app_dt30) month1_app_cnt,
+     sum(app_dt60) month2_app_cnt,
+     sum(app_dt90) month3_app_cnt,
+     sum(case when app_dt30 =1 then app_hr_025 end) month1_app_hour025_cnt,
+     sum(case when app_dt30 =1 then app_hr_627 end) month1_app_hour627_cnt,
+     sum(case when app_dt30 =1 then app_hr_829 end) month1_app_hour829_cnt,
+     sum(case when app_dt30 =1 then app_hr_10211 end) month1_app_hour10211_cnt,
+     sum(case when app_dt30 =1 then app_hr_12213 end) month1_app_hour12213_cnt,
+     sum(case when app_dt30 =1 then app_hr_14215 end) month1_app_hour14215_cnt  ,
+     sum(case when app_dt30 =1 then app_hr_16217 end) month1_app_hour16217_cnt  ,
+     sum(case when app_dt30 =1 then app_hr_18219 end) month1_app_hour18219_cnt  ,
+     sum(case when app_dt30 =1 then app_hr_20221 end) month1_app_hour20221_cnt  ,
+     sum(case when app_dt30 =1 then app_hr_22223 end) month1_app_hour22223_cnt  
+  from (
+     select 
+        user_id ,
+        log_time ,
+        log_hour ,
+        phone_id ,
+        visit_os ,
+        os_version ,
+        app_name   ,
+        app_version,
+        device_token,
+        visit_ip,
+        province,
+        city,
+        row_number() over(distribute by user_id sort by  log_time asc) rn_asc,
+        row_number() over(distribute by user_id sort by  log_time desc) rn_desc,
+        (case when log_time>=date_sub('2018-12-25',6) then 1 end) app_dt7,
+        (case when log_time>=date_sub('2018-12-25',14) then 1 end) app_dt15,
+        (case when log_time>=date_sub('2018-12-25',29) then 1 end) app_dt30,
+        (case when log_time>=date_sub('2018-12-25',59) then 1 end) app_dt60,
+        (case when log_time>=date_sub('2018-12-25',89) then 1 end) app_dt90,
+        (case when hour(log_time) between 0 and 5 then 1 end) app_hr_025,
+        (case when hour(log_time) between 6 and 7 then 1 end) app_hr_627,
+        (case when hour(log_time) between 8 and 9 then 1 end) app_hr_829,
+        (case when hour(log_time) between 10 and 11 then 1 end) app_hr_10211,
+        (case when hour(log_time) between 12 and 13 then 1 end) app_hr_12213,
+        (case when hour(log_time) between 14 and 15 then 1 end) app_hr_14215,
+        (case when hour(log_time) between 16 and 17 then 1 end) app_hr_16217,
+        (case when hour(log_time) between 18 and 19 then 1 end) app_hr_18219,
+        (case when hour(log_time) between 20 and 21 then 1 end) app_hr_20221,
+        (case when hour(log_time) between 22 and 23 then 1 end) app_hr_22223
+     from qfbap_dwd.dwd_user_app_pv
+     ) app
+  group by user_id
+) r_app on us.user_id = r_app.user_id
+;
+
+
+
+
+
+
+
+
+

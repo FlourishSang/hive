@@ -1,0 +1,759 @@
+insert into teachers values('02','李四');
+ 1、stu_msg
+ 
+create table if not exists stu_msg(
+id int,
+name String,
+birth date,
+gender String
+)
+row format delimited 
+fields terminated by ' '
+;
+
+
+ 2、projects
+
+ `id` int, 
+  `pname` string, 
+  `pid` int
+ 3、trachers
+ 
+   `id` int, 
+  `sname` string
+  
+4、
+Create table if not exists stu_score (
+sId int,
+tid int,
+score int )
+row format delimited 
+fields terminated by ' '
+;
+load data local inpath '/test/students.txt' into table stu_msg;
+
+
+
+
+
+1、查询"01"课程比"02"课程成绩高的学生的信息及课程分数:
+
+select stu.*,c.*
+from stu_msg stu
+join stu_score a on a.tid = '01' and a.sid= stu.id
+left join stu_score b on b.tid = '02' and b.sid= stu.id
+join stu_score c on c.sid= stu.id
+where a.score> b.score 
+;
+
+2、查询"01"课程比"02"课程成绩低的学生的信息及课程分数:
+select stu.*,c.*
+from stu_msg stu
+join stu_score a on a.tid = '01' and a.sid= stu.id
+left join stu_score b on b.tid = '02' and b.sid= stu.id
+join stu_score c on c.sid= stu.id
+where a.score< b.score 
+;
+
+3、查询平均成绩大于等于60分的同学的学生编号和学生姓名和平均成绩:
+select 
+a.sid,stu.name,avg(a.score) as avgscore
+from stu_score a
+join stu_msg stu on a.sid = stu.id
+group by a.sid,stu.name
+having avgscore >= 60
+;
+
+4、查询平均成绩小于60分的同学的学生编号和学生姓名和平均成绩:
+(包括有成绩的和无成绩的)
+select 
+a.s_id,stu.s_name,avg(a.s_score) as avgscore
+from score a
+join student stu on a.s_id = stu.s_id
+group by a.s_id,stu.s_name
+having avgscore < 60
+union all
+select stu.s_id,stu.s_name,NULL as avgscore
+from student stu
+left join score a on stu.s_id = a.s_id
+where a.s_score is null
+;
+
+
+select stu.s_id,stu.s_name,NULL as avgscore
+from student stu
+where not exists (select 1 from score a where a.s_id = stu.s_id)
+;
+
+
+select stu.s_id,stu.s_name,NULL as avgscore
+from student stu
+left join score a on stu.s_id = a.s_id
+where a.s_score is null
+;
+
+select stu.s_id,stu.s_name,NULL as avgscore
+from student stu
+where stu.s_id not in (select s_id from score )
+;
+
+5、查询所有同学的学生编号、学生姓名、选课总数、所有课程的总成绩:
+select 
+stu.s_id,stu.s_name,count(a.s_score) as totalSubjects,sum(a.s_score) as sumScores
+from student stu
+left join score a on a.s_id = stu.s_id
+group by stu.s_id,stu.s_name
+;
+
+
+select 
+stu.s_id,stu.s_name,
+count(a.s_score) over(distribute by stu.s_id) as totalSubjects,
+sum(a.s_score) over(distribute by stu.s_id) as sumScores
+from student stu
+left join score a on a.s_id = stu.s_id
+;
+
+
+6、查询"李"姓老师的数量:
+select count(1)
+from teacher
+where t_name like '李%'
+;
+
+7、查询学过"张三"老师授课的同学的信息:
+select distinct stu.*
+from student stu
+join score a on a.s_id = stu.s_id
+join course b on b.c_id = a.c_id
+join teacher c on c.t_id =b.t_id 
+where c.t_name = '张三'
+;
+
+select stu.*
+from student stu
+where exists (select 1 from score a,course b,teacher c where c.t_name='张三' and  c.t_id = b.t_id and b.c_id = a.c_id and stu.s_id = a.s_id)
+;
+
+select stu.*
+from student stu
+join course b on b.c_id = a.c_id
+join teacher c on c.t_name = '张三' and c.t_id =b.t_id 
+left semi join score a on a.s_id = stu.s_id
+;
+
+
+8、查询没学过"张三"老师授课的同学的信息:
+select stu.s_id,stu.s_name
+from student stu
+join teacher c on c.t_name = '张三' 
+join course b on c.t_id= b.t_id
+left join score a on b.c_id = a.c_id and a.s_id = stu.s_id
+group by stu.s_id,stu.s_name
+having sum(case when a.s_score is null then 0 else 1 end ) = 0
+;
+
+select stu.*
+from student stu
+where not exists (select 1 from score a,course b,teacher c where c.t_name='张三' and  c.t_id = b.t_id and b.c_id = a.c_id and stu.s_id = a.s_id)
+;
+
+
+9、查询学过编号为"01"并且也学过编号为"02"的课程的同学的信息:
+select stu.*
+from student stu
+join score a on a.s_id =stu.s_id and a.c_id = '01' 
+where exists (select 1 from score b where b.c_id = '02' and stu.s_id = b.s_id)
+;
+
+
+select stu.*
+from student stu,score a,score b 
+where stu.s_id = a.s_id and stu.s_id = b.s_id and a.c_id = '01' and b.c_id = '02'
+;
+
+select stu.s_id,stu.s_name
+from student stu
+join score a on stu.s_id =a.s_id 
+where a.c_id = '01' or a.c_id = '02'
+group by stu.s_id,stu.s_name
+having count(1) = 2
+;
+
+select stu.s_id,stu.s_name
+from student stu
+join score a on stu.s_id =a.s_id 
+where a.c_id in (1,2)
+group by stu.s_id,stu.s_name
+having count(1) = 2
+;
+
+78、查询学过"张三"老师授课的所有课程的同学的信息:
+select stu.s_id,stu.s_name
+from student stu
+join course a
+join teacher c on c.t_name = '张三' and c.t_id = a.t_id 
+left join score b on b.c_id = a.c_id and b.s_id = stu.s_id
+group by stu.s_id,stu.s_name
+having sum(case when b.s_score is null then 1 else 0 end) = 0
+;
+
+10、查询学过编号为"01"但是没有学过编号为"02"的课程的同学的信息:
+select stu.*
+from student stu
+join score a on a.s_id =stu.s_id and a.c_id = '01' 
+where not exists (select 1 from score b where b.c_id = '02' and stu.s_id = b.s_id)
+;
+
+
+select stu.*
+from student stu,score a,score b 
+where stu.s_id = a.s_id and stu.s_id = b.s_id and a.c_id = '01' and b.c_id = '02'
+;
+
+11、查询没有学全所有课程的同学的信息:
+select distinct stu.*
+from student stu
+join course a 
+left join score b on b.s_id = stu.s_id and b.c_id = a.c_id 
+where b.s_score is null
+;
+
+12、查询至少有一门课与学号为"01"的同学所学相同的同学的信息:
+select distinct stu.*
+from student stu
+join score a on a.s_id = stu.s_id
+where stu.s_id <> '01' and a.c_id in (
+select c_id from score where s_id = '01')
+;
+
+select distinct stu.*
+from student stu
+join score a on a.s_id = stu.s_id and a.s_id = '01'
+join score b on b.c_id = a.c_id
+where stu.s_id <> '01'
+;
+
+exists
+
+13、查询和"01"号的同学学习的课程完全相同的其他同学的信息:
+select distinct stu.*
+from student stu
+join score a on a.s_id = stu.s_id and a.s_id = '01' and a.c_id <> '01'
+left join score b on b.c_id = a.c_id
+;
+
+
+select *
+from student stu
+join 
+(
+select a.c_id
+from score a
+where a.s_id = '01' and a.c_id <> '01'
+) aa 
+ full outer join score b on b.c_id = aa.c_id and stu.s_id = b.s_id 
+;
+
+group by stu.s_id,stu.s_name
+ having sum(case when stu.s_id is null then 1 else 0 end ) = 0 and 
+ sum(case when b.s_id is null then 1 else 0 end) = 0
+ 
+ 
+ 
+
+14、查询没学过"张三"老师讲授的任一门课程的学生姓名:
+
+select stu.*
+from stu_msg stu
+join teachers a on a.sname = '张三'
+join projects b on b.pid = a.id
+left join stu_score c on c.tid = b.id and c.sid = stu.id
+where c.score is null
+;
+
+
+15、查询两门及其以上不及格课程的同学的学号，姓名及其平均成绩:
+
+select 
+stu.id,
+stu.name,round(avg(b.score),2) as avgscore
+from stu_msg stu 
+join stu_score a on a.sid = stu.id
+join stu_score b on b.sid = stu.id
+where a.score < 60 or a.score is null
+group by stu.id,stu.name
+having count(1) >= 2
+;
+
+
+16、检索"01"课程分数小于60，按分数降序排列的学生信息:
+
+select stu.id,stu.name,a.score
+from stu_msg stu
+join        
+stu_score a on a.tid = '01' and a.sid = stu.id
+where a.score < 60
+order by a.score desc
+;
+
+select *
+from student stu
+join score a on a.s_id = stu.s_id
+where a.c_id = '01' and a.s_score < 60
+order by a.s_score desc
+;
+
+17、按平均成绩从高到低显示所有学生的所有课程的成绩以及平均成绩:
+
+select stu.id,stu.name,b.tid,b.score,avg(a.score) as avgscore
+from stu_msg stu
+join stu_score a on stu.id = a.sId
+join stu_score b on stu.id = b.sid
+group by stu.id,stu.name,b.score,b.tid
+order by avgscore desc
+;
+
+
+select *,
+round(avg(a.score) over(distribute by a.sid),2) as avgscore
+from stu_score a
+order by avgscore desc,a.score desc
+;
+
+
+18.查询各科成绩最高分、最低分和平均分：以如下形式显示：课程ID，课程name，最高分，最低分，平均分，及格率，中等率，优良率，优秀率:
+
+select a.id,a.pname,max(b.score)as max ,min(b.score)as min,round(avg(b.score),2)as avg ,
+round(1-count(d.sid)/count(b.sid),2),round(1-count(e.sid)/count(b.sid),2),round(1-count(f.sid)/count(b.sid),2),round(1-count(g.sid)/count(b.sid),2)
+from stu_score b 
+join projects a on a.id = b.tid 
+left join stu_score d on b.sid = d.sid and b.tid = d.tid and d.score <60
+left join stu_score e on b.sid = e.sid and b.tid = e.tid and e.score <70
+left join stu_score f on b.sid = f.sid and b.tid = f.tid and f.score <80
+left join stu_score g on b.sid = g.sid and b.tid = g.tid and g.score <90
+group by a.id,a.pname
+; 
+
+select 
+b.c_id,
+b.c_course,
+max(a.s_score) as maxscore,
+min(a.s_score) as minscore,
+round(avg(a.s_score),2) as avgscore,
+round(sum(case when a.s_score >=60 then 1 else 0 end ) / count(1) * 100,2) as `及格率`,
+round(sum(case when a.s_score between 70 and 79 then 1 else 0 end ) / count(1) * 100,2) as `中等率`,
+round(sum(case when a.s_score between 80 and 89 then 1 else 0 end ) / count(1) * 100,2) as `优良率`,
+round(sum(case when a.s_score >=90 then 1 else 0 end ) / count(1) * 100,2) as `优秀率`
+from score a
+join course b on b.c_id = a.c_id
+group by b.c_id,b.c_course
+;
+
+19、按各科成绩进行排序，并显示排名:– row_number() over()分组排序功能
+
+select stu.id,stu.name ,b.pname,row_number() over(partition by a.tid)
+from stu_msg stu 
+join stu_score a on stu.id = a.sId
+join projects b on b.id = a.tid
+;
+
+20、查询学生的总成绩并进行排名:
+
+select stu.id,stu.name,sum(a.score)as sum 
+from stu_msg stu
+join stu_score a on stu.id = a.sId
+group by stu.id,stu.name 
+order by sum desc
+; 
+ 
+
+21、查询不同老师所教不同课程平均分从高到低显示:
+select p.id,p.pname,t.sname,round(avg(sc.score),2)as avg
+from  stu_score sc
+join projects p on sc.tid = p.id
+join teachers t on t.id = p.pid
+group by p.id,p.pname,t.sname
+order by avg desc
+;
+
+
+select t_id,a.c_id,round(avg(s_score),2) as avgscore
+from score a
+join course b on b.c_id = a.c_id
+group by t_id,a.c_id
+order by t_id,avgscore desc 
+;
+
+22、查询所有课程的成绩第2名到第3名的学生信息及该课程成绩:
+
+select stu.id,stu.name,a.tid,a.score,a.rank
+from stu_msg stu
+join (select *,
+rank() over(distribute by tid sort by score desc) as rank
+from stu_score
+) a on a.sid = stu.id and a.rank between 2 and 3 
+;
+
+
+select * from 
+(
+select *,
+row_number() over(distribute by c_id sort by s_score desc) as rm
+from score
+) a
+where a.rm between 2 and 3
+;
+
+23、统计各科成绩各分数段人数：课程编号,课程名称,[100-85],[85-70],[70-60],[0-60]及所占百分比
+
+select sc.tid,p.pname,
+round(sum(case when sc.score <=60 then 1 else 0 end)/count(sc.score),2) as `0-60` ,
+round(sum(case when sc.score between 61 and 69 then 1 else 0 end)/count(sc.score),2) as `61-69` ,
+round(sum(case when sc.score between 70 and 84 then 1 else 0 end)/count(sc.score),2) as `70-84` ,
+round(sum(case when sc.score >=85 then 1 else 0 end)/count(sc.score),2) as `100-85`
+from projects p
+join stu_score sc on sc.tid = p.id
+group by sc.tid,p.pname
+;
+
+
+
+24、查询学生平均成绩及其名次:
+
+select stu.id,stu.name,sc.avg,
+rank() over( sort by sc.avg desc) as rank
+from stu_msg stu
+join (select sid,round(avg(score),2) as avg
+from stu_score
+group by sid) sc on stu.id = sc.sid
+;
+
+
+select *,
+row_number() over(sort by a.avgscore desc) as rm
+from (
+select 
+s_id,
+round(avg(s_score),2) as avgscore
+from score
+group by s_id ) a
+;
+
+25、查询各科成绩前三名的记录三个语句
+
+select *
+from 
+(select sid,tid,score,
+row_number() over(distribute by tid sort by score desc) as rn
+from stu_score 
+)sc 
+where sc.rn <=3
+;
+
+select * from 
+(
+select *,
+row_number() over(distribute by c_id sort by s_score desc) as rm,
+rank() over(distribute by c_id sort by s_score desc) as rk,
+dense_rank() over(distribute by c_id sort by s_score desc) as drk
+from score
+) a
+where a.rm < 4
+;
+
+
+26、查询每门课程被选修的学生数:
+
+select tid ,count(sid)as count
+from stu_score
+group by tid
+;
+
+select c_id,count(1) as totalstu
+from score
+group by c_id
+;
+
+27、查询出只有两门课程的全部学生的学号和姓名:
+select stu.id,stu.name
+from stu_msg stu
+join stu_score sc on sc.sid = stu.id 
+group by stu.id,stu.name 
+having count(1)=2
+;
+ 
+select stu.s_id,stu.s_name
+from student stu
+join score a on a.s_id = stu.s_id
+group by  stu.s_id,stu.s_name
+having count(1) = 2
+;
+
+28、查询男生、女生人数:
+
+select gender,count(1) as count 
+from stu_msg 
+group by gender
+;
+
+
+select s_sex,count(1) as totalstu
+from student
+group by s_sex
+;
+
+29、查询名字中含有"风"字的学生信息:
+
+select *
+from stu_msg 
+where name like '%风%'
+;
+
+select * 
+from student
+where s_name like '%风%'
+;
+
+30、查询同名同性学生名单，并统计同名人数:
+insert into stu_msg values('09','李云','1990-08-12','男');
+
+select name ,gender,count(1) count
+from stu_msg
+group by gender ,name 
+having count >1
+;
+
+select s_name,s_sex,count(1) as totalstu
+from student
+group by s_name,s_sex
+having totalstu > 1
+;
+
+
+31、查询1990年出生的学生名单:
+select * 
+from stu_msg 
+where birth like '1990%'
+;
+
+select * 
+from student 
+where s_birth like '1990%'
+; 
+
+32、查询每门课程的平均成绩，结果按平均成绩降序排列，平均成绩相同时，按课程编号升序排列:
+
+select tid ,round(avg(score),2) as avg
+from stu_score 
+group by tid
+order by avg desc,tid
+limit 100
+;
+
+select c_id,round(avg(s_score),2) as avgscore
+from score
+group by c_id
+order by avgscore desc,c_id asc
+;
+
+33、查询平均成绩大于等于85的所有学生的学号、姓名和平均成绩:
+
+select stu.id,stu.name,round(avg(sc.score)) as avg
+from stu_score sc 
+join stu_msg stu on stu.id = sc.sid 
+group by stu.id,stu.name
+having round(avg(sc.score)) >=85
+;
+
+
+select s_id,avg(s_score) as avgscore
+from score
+group by s_id
+having avgscore >= 85
+;
+
+34、查询课程名称为"数学"，且分数低于60的学生姓名和分数:
+select stu.name,sc.score
+from stu_score sc 
+join stu_msg stu on stu.id = sc.sId 
+join projects p on p.id = sc.tid
+where p.pname = '数学' and sc.score <60
+;
+
+select stu.s_name,a.s_score
+from score a
+join course b on b.c_course = '数学' and b.c_id = a.c_id
+join student stu on stu.s_id = a.s_id
+where a.s_score < 60
+;
+
+35、查询所有学生的课程及分数情况:
+select stu.*,sc.*,p.*,t.*
+from  stu_msg stu 
+join stu_score sc on stu.id = sc.sid 
+join projects p on p.id = sc.tid 
+join teachers t on p.pid = t.id 
+;
+
+select *
+from student stu
+join course a
+left join score b on b.s_id = stu.s_id and b.c_id = a.c_id
+;
+
+36、查询任何一门课程成绩在70分以上的学生姓名、课程名称和分数:
+
+select a.name ,c.pname,b.score
+from stu_msg a join stu_score b on a.id = b.sid
+join projects c on b.tid = c.pid
+where b.score>70
+;
+
+37、查询课程不及格的学生:
+select *
+from stu_msg a 
+join stu_score b 
+on a.id = b.sid
+where b.score<60
+;
+
+
+38、查询课程编号为01且课程成绩在80分以上的学生的学号和姓名:
+select a.id,a.name 
+from stu_msg a join stu_score b on a.id = b.sid 
+where b.score>=80 and  b.tid=1
+;
+
+
+39、求每门课程的学生人数:
+select count(1) from stu_score 
+group by tid;
+
+40、查询选修"张三"老师所授课程的学生中，成绩最高的学生信息及其成绩:
+select * from stu_msg a 
+join stu_score b on a.id = b.sid
+join teachers c on c.id = b.tid
+join (select tid,max(score) as m_score from stu_score group by tid) d
+on d.tid = b.tid
+where c.sname = "张三" and d.m_score = b.score
+;
+
+41、查询不同课程成绩相同的学生的学生编号、课程编号、学生成绩:
+  select a.id,b.tid,b.score
+  from stu_msg a 
+  join stu_score b on a.id = b.sid
+  join 
+  (select sid,score,sum(1) as sum 
+  from stu_score 
+  group by sid,score)c
+  on c.sid = b.sid and c.score = b.score
+  where c.sum>1
+  ; 
+
+select distinct a.sid,b.tid,b.score
+from stu_score a ,stu_score b
+where a.sid != b.sid and a.score = b.score and a.tid = b.tid
+;
+
+
+42、查询每门课程成绩最好的前三名:
+select * from 
+(select *, 
+row_number() over(distribute by tid sort by score desc) as row_score
+from stu_score)
+where row_score<=3
+;
+
+43、统计每门课程的学生选修人数（超过5人的课程才统计）:
+– 要求输出课程号和选修人数，查询结果按人数降序排列，若人数相同，按课程号升序排列
+select * 
+from 
+(select tid,sum(1) as sum_num
+from stu_score
+group by tid) a
+where sum_num > 5
+order by sum_num desc,tid
+;
+
+44、检索至少选修两门课程的学生学号:
+select * 
+from 
+(select sid,sum(1) as sum_num
+from stu_score
+group by sid) a
+where sum_num > 2
+order by sum_num desc,sid
+;
+
+select sid,sum(1) as sum_num
+from stu_score
+group by sid 
+having sum_num > 2
+
+
+
+45、查询选修了全部课程的学生信息:
+select a.*,b.tid_count
+from stu_msg a 
+join(
+select sid,count(distinct tid) as tid_count
+from stu_score 
+group by sid
+having tid_count=3)b
+on a.id = b.sid
+;
+
+select stu.s_id,stu.s_name
+from student stu
+join course a
+left join score b on b.c_id = a.c_id and b.s_id = stu.s_id
+group by stu.s_id,stu.s_name
+having sum(case when b.s_score is null then 1 else 0 end) = 0
+;
+
+46、查询各学生的年龄(周岁):
+– 按照出生日期来算，当前月日 < 出生年月的月日则，年龄减一
+select id ,
+floor(datediff(current_date,birth)/365)as age
+from stu_msg 
+;
+
+SELECT s_birth,
+(year(current_date())-year(s_birth) - 
+(CASE WHEN month(current_date())>month(s_birth) THEN 0 
+when month(current_date())= month(s_birth) and day(current_date())>=day(s_birth) then 0 ELSE 1 END)) AS age
+FROM student;
+
+47、查询本周过生日的学生:
+select id ,name
+from stu_msg 
+where weekofyear(birth)=weekofyear(current_date)
+; 
+
+
+48、查询下周过生日的学生:
+select id ,name
+from stu_msg 
+where weekofyear(birth)=weekofyear(current_date)+1
+; 
+
+49、查询本月过生日的学生:
+SELECT * FROM student WHERE MONTH(current_date()) =MONTH(s_birth);
+
+ 50、查询12月份过生日的学生:
+SELECT * FROM student WHERE 12=MONTH(s_birth);
+
+
+
+
+
+
+
+
+
+
+
+
+
+

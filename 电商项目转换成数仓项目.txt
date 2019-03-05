@@ -1,0 +1,1458 @@
+ODS
+操作型数据存储，存储的是当前的数据情况，给使用者提供当前的状态，提供即时性的、操作性的、集成的全体信息的需求。
+ODS作为数据库到数据仓库的一种过渡形式，与数据仓库在物理结构上不同，能提供高性能的响应时间,ODS设计采用混合设计方式。
+ODS中的数据是"实时值",而数据仓库的数据却是"历史值"，一般ODS中储存的数据不超过一个月，而数据仓库为10年或更多.
+
+
+dw层：数据仓库存储是一个面向主题的，反映历史变化数据，用于支撑管理决策。
+dwd：detail层
+dws：server层
+dwa：简 单汇总层
+Data Mart
+为了特定的应用目的或应用范围，而从数据仓库中独立出来的一部分数据，也可称为部门数据或主题数据（subjectarea）。在数据仓库的实施过程中往往可以从一个部门的数据集市着手，以后再用几个数据集市组成一个完整的数据仓库。需要注意的就是在实施不同的数据集市时，同一含义的字段定义一定要相容，这样再以后实施数据仓库时才不会造成大麻烦。
+DDS(decision-support system)决策支持系统：
+用于支持管理决策的系统。通常，DSS包括以启发的方式对大量的数据单元进行的分析，通常不涉及数据更新。
+
+1、确定数据源
+前台点击流数据
+后台服务程序产生的数据
+
+2、确定主题
+用户主题：用户、会员相关的信息
+订单主题：订单相关
+事件主题：
+浏览器主题：浏览器相关指标
+
+3、创建模型（创建表）
+1、维度表
+维度层（dim）：
+地域维度：省、市、县
+浏览器维度：浏览器名称、版本
+时间维度：年月日周季度
+事件维度：category	action
+操作系统维度：
+平台维度：
+外链维度：
+
+2、ods层
+1、浏览数据
+2、订单数据
+
+3、创建dw层
+4、创建dm层
+
+命名规则：
+ods_user_addr_
+ODS_user_addr_   
+ods.user.addr. 不行
+
+create database if not exists gp1813_dim;
+create database if not exists gp1813_ods; 
+create database if not exists gp1813_dw;
+create database if not exists gp1813_dm;
+
+
+创建维度表：
+CREATE TABLE IF NOT EXISTS `dim_province` (
+  `id` int,
+  `province` string,
+  `countryId` int,
+  `desc` string
+) 
+row format delimited fields terminated by '\t'
+;
+
+CREATE TABLE IF NOT EXISTS `dim_city` (
+  `id` int,
+  `city` string,
+  `desc` string
+) 
+row format delimited fields terminated by '\t'
+;
+
+CREATE TABLE IF NOT EXISTS `dim_province_city` (
+  `dim_region_id` bigint,
+  `dim_region_city_name` string,
+  `dim_region_province_name` string,
+  `dim_region_country_name` string,
+  `dim_region_city_id` string,
+  `dim_region_province_id` string,
+  `dim_region_country_id` string,
+  `dim_region_date` string
+)
+row format delimited fields terminated by '\t'
+;
+
+
+CREATE TABLE IF NOT EXISTS `dim_platform` (
+  `id` int,
+  `platform_name` string
+)
+row format delimited fields terminated by '\t'
+;
+
+
+
+CREATE TABLE IF NOT EXISTS `dim_kpi` (
+  `id` int,
+  `kpi_name` string
+)
+row format delimited fields terminated by '\t'
+;
+
+
+
+CREATE TABLE IF NOT EXISTS `dim_event_name` (
+  `id` int,
+  `name` string
+)
+row format delimited fields terminated by '\t'
+;
+
+CREATE TABLE IF NOT EXISTS `dim_event_category` (
+  `id` int,
+  `category` string
+)
+row format delimited fields terminated by '\t'
+;
+
+
+CREATE TABLE IF NOT EXISTS `dim_event_action` (
+  `id` int,
+  `action` string
+)
+row format delimited fields terminated by '\t'
+;
+
+
+CREATE TABLE IF NOT EXISTS `dim_browser_name` (
+  `id` int,
+  `browser_name` string,
+  `browser_version_id` int
+  )
+row format delimited fields terminated by '\t'
+;
+
+CREATE TABLE IF NOT EXISTS `dim_browser_version` (
+  `id` int,
+  `browser_version` string
+  )
+row format delimited fields terminated by '\t'
+;
+
+
+CREATE TABLE IF NOT EXISTS `dim_order` (
+  `oid` bigint,
+  `on` string,
+  `cut_id` bigint,
+  `cua_id` bigint,
+  `browser_version` string
+  )
+row format delimited fields terminated by '\t'
+;
+
+CREATE TABLE IF NOT EXISTS `dim_currency_type` (
+  `id` int,
+  `currency_name` string
+)
+row format delimited fields terminated by '\t'
+;
+
+CREATE TABLE IF NOT EXISTS `dim_payment_type` (
+  `id` int,
+  `payment_type` string
+)
+row format delimited fields terminated by '\t'
+;
+
+CREATE TABLE IF NOT EXISTS `dim_week`(
+   STD_WEEK_CODE STRING,
+   STD_WEEK_NAME STRING,
+   BEGIN_DATE STRING,
+   END_DATE STRING,
+   NOTES STRING,
+   IS_DISPLAY INT,
+   DISPLAY_ORDER INT,
+   IS_VALID INT,
+   UPDATE_DATE STRING,
+   LAST_STD_WEEK_CODE STRING
+)              
+row format delimited fields terminated by '\t'
+;
+
+CREATE TABLE IF NOT EXISTS `dim_userinfo` (
+  `uid` String,
+  `uname` string
+)
+row format delimited fields terminated by '\t'
+;
+
+load data local inpath '/root/dim/dim_province' into table dim_province;
+load data local inpath '/root/dim/dim_city' into table dim_city;
+load data local inpath '/root/dim/dim_province_city' into table dim_province_city;
+load data local inpath '/root/dim/dim_platform' into table dim_platform;
+load data local inpath '/root/dim/dim_kpi' into table dim_kpi;
+load data local inpath '/root/dim/dim_event_name' into table dim_event_name;
+load data local inpath '/root/dim/dim_browser_name' into table dim_browser_name;
+load data local inpath '/root/dim/dim_browser_version' into table dim_browser_version;
+load data local inpath '/root/dim/dim_userinfo' into table dim_userinfo;
+
+在ods库中建立事实表
+udf：
+create table if not exists font_logs(
+ip string,
+s_time string,
+server_ip string,
+url string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+;
+
+使用
+create external table if not exists ods_logs(
+`ver` string,
+`s_time` string,
+`en` string,
+`u_ud` string,
+`u_mid` string,
+`u_sd` string,
+`c_time` string,
+`l` string,
+`b_iev` string,                                                                                
+`b_rst` string,
+`p_url` string,
+`p_ref` string,
+`tt` string,
+`pl` string,
+`ip` string,
+`oid` string,
+`on` string,
+`cua` string,
+`cut` string,
+`pt` string,
+`ca` string,
+`ac` string,
+`kv_` string,
+`du` string,
+`browserName` string,
+`browserVersion` string,
+`osName` string,
+`osVersion` string,
+`country` string,
+`province` string,
+`city` string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+;
+
+加载数据：
+load data inpath '/ods/11/11' into table ods_logs partition(month='11',day='11');
+load data inpath '/ods/11/12' into table ods_logs partition(month='11',day='12');
+
+parquet：
+
+create external table if not exists ods_logs_orc(
+`ver` string,
+`s_time` string,
+`en` string,
+`u_ud` string,
+`u_mid` string,
+`u_sd` string,
+`c_time` string,
+`l` string,
+`b_iev` string,
+`b_rst` string,
+`p_url` string,
+`p_ref` string,
+`tt` string,
+`pl` string,
+`ip` string,
+`oid` string,
+`on` string,
+`cua` string,
+`cut` string,
+`pt` string,
+`ca` string,
+`ac` string,
+`kv_` string,
+`du` string,
+`browserName` string,
+`browserVersion` string,
+`osName` string,
+`osVersion` string,
+`country` string,
+`province` string,
+`city` string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from ods_logs
+insert into table ods_logs_orc partition(month='11',day='11')
+select 
+`ver`,
+`s_time`,
+`en`,
+`u_ud`,
+`u_mid`,
+`u_sd`,
+`c_time`,
+`l`,
+`b_iev`,
+`b_rst`,
+`p_url`,
+`p_ref`,
+`tt`,
+`pl`,
+`ip`,
+`oid`,
+`on`,
+`cua`,
+`cut`,
+`pt`,
+`ca`,
+`ac`,
+`kv_`,
+`du`,
+`browserName`,
+`browserVersion`,
+`osName`,
+`osVersion`,
+`country`,
+`province`,
+`city`
+where month='11' and day='11'
+;
+
+
+from ods_logs
+insert into table ods_logs_orc partition(month='11',day='12')
+select 
+`ver`,
+`s_time`,
+`en`,
+`u_ud`,
+`u_mid`,
+`u_sd`,
+`c_time`,
+`l`,
+`b_iev`,
+`b_rst`,
+`p_url`,
+`p_ref`,
+`tt`,
+`pl`,
+`ip`,
+`oid`,
+`on`,
+`cua`,
+`cut`,
+`pt`,
+`ca`,
+`ac`,
+`kv_`,
+`du`,
+`browserName`,
+`browserVersion`,
+`osName`,
+`osVersion`,
+`country`,
+`province`,
+`city`
+where month='11' and day='12'
+;
+
+创建dw层：
+###为新增用户、新增总用户、活跃用户做计算
+create table if not exists dwd_user(
+`pl` string,
+`pl_id` string,
+`en` string,
+`en_id` string,
+`browser_name` string,
+`browser_id` string,
+`browser_version` string,
+`browser_version_id` string,
+`province_name` string,
+`province_id` string,
+`city_name` string,
+`city_id` string,
+`uid` string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from(
+select 
+ol.`pl` as platform,
+dp.`id` as platformid,
+ol.`en` as eventname,
+en.`id` as eventid,
+ol.`browsername` as browsername,
+bn.`id` as browserid,
+ol.`browserversion` as browserVersion,
+bv.`id` as browserVersionId,
+ol.province as provinceName,
+pro.id as provinceId,
+ol.city as cityName,
+dc.id as cityId,
+ol.u_ud as uid
+from gp1813_ods.ods_logs_orc ol
+left join gp1813_dim.dim_platform dp on dp.platform_name = ol.pl
+left join gp1813_dim.dim_event_name en on en.name = ol.en
+left join gp1813_dim.dim_browser_name bn on bn.browser_name = ol.browserName
+left join gp1813_dim.dim_browser_version bv on bv.browser_version = ol.browserversion
+left join gp1813_dim.dim_province pro on pro.province = ol.province
+left join gp1813_dim.dim_city dc on dc.city = ol.city
+where ol.month = '11' and ol.day = '12' and ol.u_ud is not null
+) tmp
+insert into table dwd_user partition(month='11',day='12')
+select *
+;,
+
+select * from dwd_user where concat_ws('-',month,day)='11-11';
+
+
+创建dwa层：
+
+
+创建dm层：
+#用户主题下的新增用户、新增总用户、活跃用户
+drop table if exists st_user_users;
+create table if not exists st_user_users(
+`pl` string,
+`pl_id` string,
+`new_user_count` int,
+`new_total_user_count` int,
+`active_user_count` int
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+
+
+from (
+select
+us.`pl`,
+us.`pl_id`,
+count(distinct us.uid) as new_user_count,
+count(distinct us.uid) + nvl(us1.new_total_user_count,0) as new_total_user_count,
+0 as active_user_count
+from gp1813_dw.dwd_user us
+left join gp1813_dm.st_user_users us1 on us1.month = '11' and us1.day = '11' and us1.pl_id = us.pl_id
+where us.month = '11' and us.day = '11' and us.en_id = '1' 
+group by us.`pl`,us.`pl_id`,us1.new_total_user_count
+union all
+select
+us.`pl`,
+us.`pl_id`,
+0 as new_user_count,
+0 as new_total_user_count,
+count(distinct uid) as active_user_count
+from gp1813_dw.dwd_user us
+where us.month = '11' and us.day = '12'
+group by us.`pl`,us.`pl_id`
+) tmp
+insert into st_user_users partition(month='11',day='12')
+select pl,pl_id,
+sum(new_user_count) as new_user_count,
+sum(new_total_user_count) as new_total_user_count,
+sum(active_user_count) as active_user_count
+group by pl,pl_id
+;
+
+
+#浏览器主题下的新增用户、新增总用户、活跃用户
+create table if not exists st_browser_users(
+`pl` string,
+`pl_id` string,
+`browser_name` string,
+`browser_id` string,
+`browser_version` string,
+`browser_version_id` string,
+`new_user_count` int,
+`new_total_user_count` int,
+`active_user_count` int
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+
+from (
+select
+us.`pl`,
+us.`pl_id`,
+us.`browser_name`,
+us.`browser_id`,
+us.`browser_version`,
+us.`browser_version_id`,
+count(distinct us.uid) as new_user_count,
+count(distinct us.uid) + nvl(us1.new_total_user_count,0) as new_total_user_count,
+0 as active_user_count
+from gp1813_dw.dwd_user us
+left join gp1813_dm.st_browser_users us1 on us1.month = '11' and us1.day = '11' and us1.pl_id = us.pl_id
+where us.month = '11' and us.day = '11' and us.en_id = '1' 
+group by us.`pl`,us.`pl_id`,us.`browser_name`,us.`browser_id`,us.`browser_version`,us.`browser_version_id`,us1.new_total_user_count
+union all
+select
+us.`pl`,
+us.`pl_id`,
+us.`browser_name`,
+us.`browser_id`,
+us.`browser_version`,
+us.`browser_version_id`,
+0 as new_user_count,
+0 as new_total_user_count,
+count(distinct uid) as active_user_count
+from gp1813_dw.dwd_user us
+where us.month = '11' and us.day = '12'
+group by us.`pl`,us.`pl_id`,us.`browser_name`,us.`browser_id`,us.`browser_version`,us.`browser_version_id`
+) tmp
+insert into st_browser_users partition(month='11',day='12')
+select pl,pl_id,browser_name,browser_id,browser_version,browser_version_id,
+sum(new_user_count) as new_user_count,
+sum(new_total_user_count) as new_total_user_count,
+sum(active_user_count) as active_user_count
+group by pl,pl_id,`browser_name`,`browser_id`,`browser_version`,`browser_version_id`
+;
+
+#地域主题下的活跃用户
+create table if not exists st_area_users(
+`pl` string,
+`pl_id` string,
+`province_name` string,
+`province_id` string,
+`city_name` string,
+`city_id` string,
+`active_user_count` int
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+
+from (
+select
+us.`pl`,
+us.`pl_id`,
+us.`province_name`,
+us.`province_id`,
+us.`city_name`,
+us.`city_id`,
+count(distinct uid) as active_user_count
+from gp1813_dw.dwd_user us
+where us.month = '11' and us.day = '11'
+group by us.`pl`,us.`pl_id`,us.`province_name`,us.`province_id`,us.`city_name`,us.`city_id`
+) tmp
+insert into st_area_users partition(month='11',day='11')
+select pl,pl_id,province_name,province_id,city_name,city_id,
+sum(active_user_count) as active_user_count
+group by pl,pl_id,province_name,province_id,city_name,city_id
+;
+
+
+
+
+-----------
+
+dw层创建，为新增会员，活跃会员，浏览其新增会员做准备
+
+create table if not exists gp1813_dw.dwa_member(
+`pl` string,
+`pl_id` string,
+`browser_name` string,
+`browser_id` string,
+`browser_version` string,
+`browser_version_id` string,
+`province_name` string,
+`province_id` string,
+`city_name` string,
+`city_id` string,
+`u_mid` string,
+`s_time` string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from(
+select 
+ol.`pl` as platform,
+dp.`id` as platformid,
+ol.`browsername` as browsername,
+bn.`id` as browserid,
+ol.`browserversion` as browserVersion,
+bv.`id` as browserVersionId,
+ol.province as provinceName,
+pro.id as provinceId,
+ol.city as cityName,
+dc.id as cityId,
+ol.u_mid as u_mid,
+ol.s_time as s_time
+from gp1813_ods.ods_logs_orc ol
+left join gp1813_dim.dim_platform dp on dp.platform_name = ol.pl
+left join gp1813_dim.dim_browser_name bn on bn.browser_name = ol.browserName
+left join gp1813_dim.dim_browser_version bv on bv.browser_version = ol.browserversion
+left join gp1813_dim.dim_province pro on pro.province = ol.province
+left join gp1813_dim.dim_city dc on dc.city = ol.city
+where ol.month = '11' and ol.day = '11' and ol.u_mid is not null
+) tmp
+insert into table dwa_member partition(month='11',day='11')
+select *
+;
+
+
+创建dwa层：
+create database if not exists gp1813_dwa;
+
+#会员id、会员mid
+create table if not exists dwa_member(
+`id` string,
+`u_mid` string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from (
+select distinct
+0 as id,
+us.`uid` as u_mid
+from gp1813_dw.dwd_user us
+where us.month = '11' and us.day = '11'
+) tmp
+insert into dwa_member partition(month='11',day='11')
+select *
+;
+
+
+
+创建dm层：
+会员主题下新增会员、总会员、活跃会员
+create table if not exists st_member_members(
+`pl` string,
+`pl_id` string,
+`new_member_count` int,
+`total_member_count` int,
+`active_member_count` int
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+------------------------------------------------------
+from (
+select 
+us.`pl`,
+us.`pl_id`,
+sum(case when us1.id is null then 1 else 0 end) as new_member_count,
+sum(case when us1.id is null then 1 else 0 end) + nvl(us2.total_member_count,0) as total_member_count,
+0 as active_member_count
+from 
+(select * from
+(select  pl,pl_id,u_mid,
+row_number() over(partition by u_mid order by s_time asc)a 
+from gp1813_dw.dwa_member
+where month='11' and day='11')a
+where a.a=1) us
+left join gp1813_dwa.dwa_member us1 on us1.u_mid = us.u_mid
+left join gp1813_dm.st_member_members us2 on us2.month = '11' and us2.day = '11' and us2.pl_id = us.pl_id
+group by us.`pl`,us.`pl_id`,total_member_count
+union all
+select
+us.`pl`,
+us.`pl_id`,
+0 as new_member_count,
+0 as total_member_count,
+count(distinct u_mid) as active_member_count
+from gp1813_dw.dwa_member us
+where us.month = '11' and us.day = '12'
+group by us.`pl`,us.`pl_id`
+) tmp
+insert into st_member_members partition(month='11',day='12')
+select pl,pl_id,
+sum(new_member_count) as new_user_count,
+sum(total_member_count) as total_member_count,
+sum(active_member_count) as active_member_count
+group by pl,pl_id
+;
+
+
+#浏览器主题下新增会员、总会员、活跃会员
+create table if not exists st_browser_members(
+`pl` string,
+`pl_id` string,
+`browser_name` string,
+`browser_id` string,
+`browser_version` string,
+`browser_version_id` string,
+`new_member_count` int,
+`total_member_count` int,
+`active_member_count` int
+) 
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+
+from (                           
+select 
+us.`pl`,
+us.`pl_id`,
+us.`browser_name`,
+us.`browser_id`,
+us.`browser_version`,
+us.`browser_version_id`,
+sum(case when us1.id is null then 1 else 0 end) as new_member_count,
+sum(case when us1.id is null then 1 else 0 end) + nvl(us2.total_member_count,0) as total_member_count,
+0 as active_member_count
+from 
+(select * from
+(select  *,
+row_number() over(partition by u_mid order by s_time asc)a 
+from gp1813_dw.dwa_member
+where month='11' and day='11')a
+where a.a=1) us
+left join gp1813_dwa.dwa_member us1 on us1.u_mid = us.u_mid
+left join gp1813_dm.st_browser_members us2 on us2.month = '11' and us2.day = '11' and us2.pl_id = us.pl_id
+group by us.`pl`,us.`pl_id`,us.`browser_name`,us.`browser_id`,us.`browser_version`,us.`browser_version_id`,total_member_count
+union all
+selectus.`pl`,
+us.`pl_id`,
+us.`browser_name`,
+us.`browser_id`,
+us.`browser_version`,
+us.`browser_version_id`,
+0 as new_member_count,
+0 as total_member_count,
+count(distinct u_mid) as active_member_count
+from gp1813_dw.dwa_member us
+left join gp1813_dm.st_browser_members us1 on us1.month = '11' and us1.day = '10' and us1.pl_id = us.pl_id
+where us.month = '11' and us.day = '11'
+group by us.`pl`,us.`pl_id`,us.`browser_name`,us.`browser_id`,us.`browser_version`,us.`browser_version_id`,us1.total_member_count
+) tmp
+insert into st_browser_members partition(month='11',day='11')
+select pl,pl_id,browser_name,browser_id,browser_version,browser_version_id,
+sum(new_member_count) as new_user_count,
+sum(total_member_count) as total_member_count,
+sum(active_member_count) as active_member_count
+group by pl,pl_id,`browser_name`,`browser_id`,`browser_version`,`browser_version_id`
+;
+
+
+
+#地域主题下的活跃会员
+create table if not exists st_area_members(
+`pl` string,
+`pl_id` string,
+`province_name` string,
+`province_id` string,
+`city_name` string,
+`city_id` string,
+`active_member_count` int
+) 
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from (
+select
+us.`pl`,
+us.`pl_id`,
+us.`province_name`,
+us.`province_id`,
+us.`city_name`,
+us.`city_id`,
+count(distinct u_mid) as active_member_count
+from gp1813_dw.dwa_member us
+where us.month = '11' and us.day = '11'
+group by us.`pl`,us.`pl_id`,us.`province_name`,us.`province_id`,us.`city_name`,us.`city_id`
+) tmp
+insert into st_area_members partition(month='11',day='11')
+select pl,pl_id,province_name,province_id,city_name,city_id,
+active_member_count
+group by pl,pl_id,province_name,province_id,city_name,city_id,active_member_count
+;
+
+
+
+
+
+
+#--------------事件分析-----------
+创建dw层：
+###
+drop table if exists dwd_event;
+create table if not exists dwd_event(
+`pl` string,
+`pl_id` string,
+`en` string,
+`en_id` string,
+`ca` string,
+`ac` string,
+`uid` string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from(
+select 
+ol.`pl` as platform,
+dp.`id` as platformid,
+ol.`en` as en,
+en.`id` as en_id,
+ol.`ca` as ca,
+ol.`ac` as ac,
+ol.u_ud as uid
+from gp1813_ods.ods_logs_orc ol
+left join gp1813_dim.dim_platform dp on dp.platform_name = ol.pl
+left join gp1813_dim.dim_event_name en on en.name = ol.en
+where ol.month = '11' and ol.day = '11' and ol.u_ud is not null and ol.u_ud != 'null'
+) tmp
+insert into table dwd_event partition(month='11',day='11')
+select *
+;
+
+
+select pl,pl_id,en,en_id,ca,ac,uid,count(1)
+from dwd_event
+group by ca,ac,uid,pl,pl_id,en,en_id
+;
+
+
+***********************************地域信息分析**********************************
+
+创建dw层：
+#会话次数,跳出会话,活跃用户
+create table if not exists gp1813_dw.dwd_brower(
+`pl` string,
+`pl_id` string,
+`province_name` string,
+`province_id` string,
+`city_name` string,
+`city_id` string,
+`p_url` string,
+`u_sd` string,
+`u_ud` string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from(
+select 
+ol.`pl` as platform,
+dp.`id` as platformid,
+ol.province as provinceName,
+pro.id as provinceId,
+ol.city as cityName,
+dc.id as cityId,
+ol.p_url as p_url,
+ol.u_sd as u_sd,
+ol.u_ud as u_ud
+from gp1813_ods.ods_logs_orc ol
+left join gp1813_dim.dim_platform dp on dp.platform_name = ol.pl
+left join gp1813_dim.dim_province pro on pro.province = ol.province
+left join gp1813_dim.dim_city dc on dc.city = ol.city
+where ol.month = '11' and ol.day = '12' and ol.u_mid is not null
+) tmp
+insert into table gp1813_dw.dwd_brower partition(month='11',day='12')
+select *
+;
+
+
+
+
+
+创建dm层：
+会话次数,跳出会话,活跃用户
+
+create table if not exists st_brower_browers(
+`pl` string,
+`pl_id` string,
+`province_name` string,
+`province_id` string,
+`city_name` string,
+`city_id` string,
+`session_count` int,
+`session_bounce` int,
+`active_user_count` int
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+
+
+from (
+select
+us.`pl`,
+us.`pl_id`,
+us.`province_name`,
+us.`province_id`,
+us.`city_name`,
+us.`city_id`,
+count (distinct u_sd) as session_count,
+0 as session_bounce,
+count(distinct u_ud) as active_user_count
+from gp1813_dw.dwd_brower us
+where us.month = '11' and us.day = '12'
+group by us.`pl`,us.`pl_id`,us.`province_name`,us.`province_id`,us.`city_name`,us.`city_id`
+union all
+select a.`pl`,
+a.`pl_id`,
+a.`province_name`,
+a.`province_id`,
+a.`city_name`,
+a.`city_id`,
+0 as session_count,
+count(distinct a.u_sd) as session_bounce,
+0 as active_user_count
+from (select
+us.`pl`,
+us.`pl_id`,
+us.`province_name`,
+us.`province_id`,
+us.`city_name`,
+us.`city_id`,
+us.`u_sd`,
+count(distinct p_url) as bounce
+from gp1813_dw.dwd_brower us
+where us.month = '11' and us.day = '12' 
+group by us.`pl`,us.`pl_id`,us.`province_name`,us.`province_id`,us.`city_name`,us.`city_id`,us.`u_sd`
+having bounce=1)a
+group by a.`pl`,a.`pl_id`,a.`province_name`,a.`province_id`,a.`city_name`,a.`city_id`
+) tmp
+insert into st_brower_browers partition(month='11',day='12')
+select pl,pl_id,province_name,province_id,city_name,city_id,
+sum(session_count) as session_count,
+sum(session_bounce) as session_bounce,
+sum(active_user_count) as active_user_count
+group by pl,pl_id,province_name,province_id,city_name,city_id
+;
+
+***********************************Hourly（小时分析）**********************************
+-----------------------
+###为计算每个小时活跃用户作分析做准备
+创建dw层：
+#会话次数，会话时长,活跃用户
+create table if not exists gp1813_dw.dwd_hourly(
+`pl` string,
+`pl_id` string,
+`u_ud` string,
+`u_sd` string,
+`browser_name` string,
+`browser_id` string,
+`browser_version` string,
+`browser_version_id` string,
+`s_time` bigint
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from(
+select 
+ol.`pl` as platform,
+dp.`id` as platformid,
+ol.u_ud as u_ud,
+ol.u_sd as u_sd,
+ol.`browsername` as browsername,
+bn.`id` as browserid,
+ol.`browserversion` as browserVersion,
+bv.`id` as browserVersionId,
+ol.s_time as s_time
+from gp1813_ods.ods_logs_orc ol
+left join gp1813_dim.dim_platform dp on dp.platform_name = ol.pl
+left join gp1813_dim.dim_browser_name bn on bn.browser_name = ol.browserName
+left join gp1813_dim.dim_browser_version bv on bv.browser_version = ol.browserversion
+where ol.month = '11' and ol.day = '11' and ol.u_ud != 'null' and ol.u_ud is not null
+) tmp
+insert into table gp1813_dw.dwd_hourly partition(month='11',day='11')
+select *
+;
+创建dm层：
+会员主题下会话次数、会话长度,活跃会员
+
+create table if not exists st_hourly_sessions(
+`pl` string,
+`pl_id` string,
+`time` string,
+`session_count` int, 
+`session_long` int,
+`active_member_count` int
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from (
+select pl,
+pl_id,
+time,
+count(a.u_sd) as session_count,
+sum(long) as session_long,
+0 as active_member_count
+from
+(select pl,pl_id,u_ud,u_sd,time,max(s_time)-min(s_time) as long 
+from (select *,from_unixtime(s_time,'HH') as time from gp1813_dw.dwd_hourly
+where month='11' and day='11')a
+group by pl,pl_id,u_ud,u_sd,time
+)a
+group by pl,pl_id,u_sd,time
+union all
+select
+us.`pl`,
+us.`pl_id`,
+time,
+0 as session_count,
+0 as session_long,
+count(distinct u_ud) as active_member_count
+from (select pl,pl_id,u_ud,u_sd,time,max(s_time)-min(s_time) as long 
+from (select *,from_unixtime(s_time,'HH') as time from gp1813_dw.dwd_hourly
+where month='11' and day='11')a
+group by pl,pl_id,u_ud,u_sd,time
+) us
+group by us.`pl`,us.`pl_id`,time
+) tmp
+insert into table st_hourly_sessions partition(month='11',day='11')
+select pl,pl_id,time,
+sum(session_count) as session_count,
+sum(session_long) as session_long,
+sum(active_member_count) as active_member_count
+group by pl,pl_id,time
+;
+
+
+浏览器主题下会话次数、会话长度,活跃会员
+
+create table if not exists st_brower_hourly_sessions(
+`pl` string,
+`pl_id` string,
+`time` string,
+`browser_name` string,
+`browser_id` string,
+`browser_version` string,
+`browser_version_id` string,
+`session_count` int,
+`session_long` int,
+`active_member_count` int
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from (
+select pl,
+pl_id,
+time,
+browser_name,
+browser_id,
+browser_version,
+browser_version_id,
+count(a.u_sd) as session_count,
+sum(long) as session_long,
+0 as active_member_count
+from
+(select pl,pl_id,u_ud,u_sd,time,browser_name,
+browser_id,
+browser_version,
+browser_version_id,max(s_time)-min(s_time) as long 
+from (select *,from_unixtime(s_time,'HH') as time from gp1813_dw.dwd_hourly
+where month='11' and day='11')a
+group by pl,pl_id,u_ud,u_sd,time,browser_name,
+browser_id,
+browser_version,
+browser_version_id
+)a
+group by pl,pl_id,u_sd,time,browser_name,
+browser_id,
+browser_version,
+browser_version_id
+union all
+select
+us.`pl`,
+us.`pl_id`,
+time,
+browser_name,
+browser_id,
+browser_version,
+browser_version_id,
+0 as session_count,
+0 as session_long,
+count(distinct u_ud) as active_member_count
+from (select pl,pl_id,u_ud,u_sd,time,browser_name,
+browser_id,
+browser_version,
+browser_version_id,max(s_time)-min(s_time) as long 
+from (select *,from_unixtime(s_time,'HH') as time from gp1813_dw.dwd_hourly
+where month='11' and day='11')a
+group by pl,pl_id,u_ud,u_sd,time,browser_name,
+browser_id,
+browser_version,
+browser_version_id
+) us
+group by us.`pl`,us.`pl_id`,time,browser_name,
+browser_id,
+browser_version,
+browser_version_id
+) tmp
+insert into table st_brower_hourly_sessions partition(month='11',day='11')
+select pl,pl_id,time,browser_name,
+browser_id,
+browser_version,
+browser_version_id,
+sum(session_count) as session_count,
+sum(session_long) as session_long,
+sum(active_member_count) as active_member_count
+group by pl,pl_id,time,browser_name,
+browser_id,
+browser_version,
+browser_version_id
+;
+
+***********************************PV**********************************
+
+创建dw层：
+#pv`
+create table if not exists gp1813_dw.dwd_pv(
+`pl` string,
+`pl_id` string,
+`browser_name` string,
+`browser_id` string,
+`browser_version` string,
+`browser_version_id` string,
+`p_url` string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from(
+select 
+ol.`pl` as platform,
+dp.`id` as platformid,
+ol.`browsername` as browsername,
+bn.`id` as browserid,
+ol.`browserversion` as browserVersion,
+bv.`id` as browserVersionId,
+ol.`p_url`
+from gp1813_ods.ods_logs_orc ol
+left join gp1813_dim.dim_platform dp on dp.platform_name = ol.pl
+left join gp1813_dim.dim_browser_name bn on bn.browser_name = ol.browserName
+left join gp1813_dim.dim_browser_version bv on bv.browser_version = ol.browserversion
+where ol.month = '11' and ol.day = '11' and ol.u_ud != 'null' and ol.u_ud is not null
+) tmp
+insert into table gp1813_dw.dwd_pv partition(month='11',day='11')
+select *
+;
+
+
+创建dm层：
+浏览器主题下pv
+
+create table if not exists st_brower_pv(
+`pl` string,
+`pl_id` string,
+`browser_name` string,
+`browser_id` string,
+`browser_version` string,
+`browser_version_id` string,
+`pv` int
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from (
+select pl,
+pl_id,
+browser_name,
+browser_id,
+browser_version,
+browser_version_id,
+count(p_url)
+from gp1813_dw.dwd_pv
+where month='11' and day='11'
+group by pl,pl_id,browser_name,browser_id,
+browser_version,
+browser_version_id
+) tmp
+insert into table st_brower_pv partition(month='11',day='11')
+select *
+;
+
+
+
+
+drop table if exists `dim_platform`;
+CREATE TABLE IF NOT EXISTS gp1813_dim.`dim_platform` (
+  `id` int,
+  `platform_name` string
+)
+row format delimited fields terminated by '\t'
+;
+
+#事件分析-----------
+drop table if exists gp1813_dw.dwd_event;
+create table if not exists gp1813_dw.dwd_event(
+`pl` string,
+`pl_id` string,
+`ca` string,
+`ac` string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from(
+select 
+ol.`pl` as platform,
+dp.`id` as platformid,
+ol.`ca` as ca,
+ol.`ac` as ac
+from gp1813_ods.ods_logs_orc ol
+left join gp1813_dim.dim_platform dp on dp.platform_name = ol.pl
+where ol.month = '11' and ol.day = '11' 
+) tmp
+insert into table gp1813_dw.dwd_event partition(month='11',day='11')
+select *
+;
+
+创建dm层：
+select pl,pl_id,ca,ac,count(1)
+from gp1813_dw.dwd_event
+where pl_id != 'NULL'
+group by pl,pl_id,ca,ac
+;
+
+drop table if exists gp1813_dw.dwd_order;
+create table if not exists gp1813_dw.dwd_order(
+`pl` string,
+`pl_id` string,
+`oid` string,
+`en` string,
+`on` string,
+`cua` string,
+`cut` string,
+`cut_id` string,
+`pt` string,
+`pt_id` string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from(
+select 
+ol.`pl` as platform,
+dp.`id` as platformid,
+ol.`oid` as oid,
+ol.`en`,
+ol.`on`,
+ol.`cua`,
+ol.`cut`,
+dt.`id` as `cut_id`,
+ol.`pt`,
+pt.`id` as `pt_id`
+from gp1813_ods.ods_logs_orc ol
+left join gp1813_dim.dim_platform dp on dp.platform_name = ol.pl
+left join gp1813_dim.dim_currency_type dt on dt.currency_name = ol.`cut`
+left join gp1813_dim.dim_payment_type pt on pt.payment_type = ol.`pt`
+where ol.month = '11' and ol.day = '11' and ol.`oid` is not null and ol.`oid` != 'NULL'
+) tmp
+insert into table gp1813_dw.dwd_order partition(month='11',day='11')
+select *
+; 
+
+
+drop table if exists st_order;
+create table if not exists st_order(
+`pl` string,
+`pl_id` string,
+`cut` string,
+`pt` string,
+`allord` string,
+`suord` string,
+`errord` string,
+`cua` string,
+`sucua` string,
+`errcua` string
+)
+partitioned by (month string,day string)
+row format delimited fields terminated by '\001'
+stored as orc
+;
+
+from(
+select `pl`,`pl_id`,
+cut,pt,
+count(distinct oid) as allord,
+sum(case when en = 'e_cs' then 1 else 0 end) as suord,
+0 as errord,
+sum(cua) as sucua,
+0 as errcua
+from gp1813_dw.dwd_order
+where cut!='null' and en='e_cs' 
+group by pl,pl_id,cut,pt 
+union all
+select `pl`,`pl_id`,
+cut,pt,
+count(distinct oid) as allord,
+0 as suord,
+sum(case when en = 'e_cr' then 1 else 0 end) as errord,
+0 as sucua,
+sum(cua) as errcua
+from gp1813_dw.dwd_order
+where cut!='null' and en='e_cr' 
+group by pl,pl_id,cut,pt
+) tmp
+insert into table st_order partition(month='11',day='11')
+select pl,pl_id,cut,pt,
+sum(allord) as allord,
+sum(suord) as suord,
+sum(errord) as errord,
+(errcua + sucua) as cua,
+sum(sucua),
+sum(errcua)
+group by pl,pl_id,cut,pt,sucua,errcua
+;
+
+
+select pl,pl_id,cut,pt,
+sum(allord),
+sum(suord),
+sum(errord),
+sum(sucua)+sum(errcua),
+sum(sucua),
+sum(errcua)
+from st_order
+group by pl,pl_id,cut,pt
+;
+
+
+-------------深度-------------
+
+create table if not exists gp1813_dwa.dwa_dp(
+pl string,
+dt string,
+col string,
+ct int
+)
+;
+
+
+create table if not exists gp1813_dw.dw_dp(
+s_time bigint,
+pl string,
+p_url string,
+u_ud string,
+u_sid string
+)
+partitioned by(month int,day int)
+row format delimited fields terminated by ' '
+stored as orc;
+
+CREATE TABLE IF NOT EXISTS stats_view_depth (
+`platform_dimension_id` int,
+`data_dimension_id` int,
+`kpi_dimension_id` int,
+`pv1` int,
+`pv2` int,
+`pv3` int,
+`pv4` int,
+`pv5_10` int,
+`pv10_30` int,
+`pv30_60` int,
+`pv60pluss` int,
+`created` string
+);
+
+
+from(
+select
+from_unixtime(cast(dd.s_time/1000 as bigint),"yyyy-MM-dd") dt,
+dd.pl pl,
+(case
+when count(dd.p_url) = 1 then 'pv1'
+when count(dd.p_url) = 2 then 'pv2'
+when count(dd.p_url) = 3 then 'pv3'
+when count(dd.p_url) = 4 then 'pv4'
+when count(dd.p_url) <= 10  then 'pv5_10'
+when count(dd.p_url) <= 30 then 'pv10_30'
+when count(dd.p_url) <= 60 then 'pv30_60'
+else 'pv60pluss'
+end) as pv,
+dd.u_ud u_ud
+from gp1813_dw.dw_dp dd
+where dd.pl is not null 
+and dd.p_url is not null
+and dd.month = 11
+and dd.day = 11
+group by pl,from_unixtime(cast(dd.s_time/1000 as bigint),"yyyy-MM-dd"),u_ud
+) as tmp
+insert overwrite table gp1813_dwa.dwa_dp
+select pl,dt,pv,count(u_ud)
+group by pl,dt,pv
+;
+
+
+
+sqoop import-all-tables --connect jdbc:mysql://hadoopCDH:3306/qfbap_ods --username root --password root -m 1 --hive-import --hive-database qfbap_ods --create-hive-table
+
+//mysql多表导入到hive
+sqoop import-all-tables \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root --password root \
+--hive-import \
+--hive-database qfbap_ods \
+--create-hive-table \
+--fields-terminated-by ',' -m 1;
+
+
+
+sqoop import \
+--connect jdbc:mysql://hadoopCDH:3306/qfbap_ods \
+--username root \
+--password root \
+--table code_goods \
+-m 1 \
+--hive-import \
+--create-hive-table  \
+--hive-table qfbap_ods.code_goods
+
+
+
+
+
+
+
+
+
